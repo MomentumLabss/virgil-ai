@@ -9,7 +9,7 @@ Virgil is an AI-powered agent that monitors Web3 conditions on your behalf — a
 ### Prerequisites
 
 - Node.js 18+ and npm
-- API keys for: Anthropic, Etherscan, 0G (optional - app works in demo mode without 0G)
+- API keys for: Groq, Etherscan, 0G (optional - app works in demo mode without 0G)
 
 ### Installation
 
@@ -34,12 +34,9 @@ npm run dev
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ANTHROPIC_API_KEY` | Yes | Claude API key for instruction parsing and copilot |
-| `ANTHROPIC_MODEL` | No | Claude model (default: claude-sonnet-4-5) |
+| `GROQ_API_KEY` | Yes | Groq API key for extremely fast Llama 3 inference (instruction parsing and copilot) |
 | `ETHERSCAN_API_KEY` | Yes | For Ethereum blockchain data |
-| `OG_PRIVATE_KEY` | No | 0G wallet private key (enables real 0G storage) |
-| `NEXT_PUBLIC_0G_RPC_URL` | No | 0G RPC endpoint |
-| `NEXT_PUBLIC_0G_STORAGE_RPC` | No | 0G storage RPC endpoint |
+| `0G_PRIVATE_KEY` | No | 0G wallet private key (enables real 0G storage via Indexer) |
 | `NEXT_PUBLIC_APP_URL` | No | App URL (default: http://localhost:3000) |
 
 ## Architecture
@@ -47,9 +44,9 @@ npm run dev
 ### Tech Stack
 - **Frontend**: Next.js 15 (App Router), React 18, TypeScript, TailwindCSS, Framer Motion, Recharts
 - **Wallet**: RainbowKit + Wagmi v2 + Viem
-- **AI**: Anthropic Claude API (instruction parsing, decision reasoning, copilot chat)
+- **AI**: Groq Llama 3 API (instruction parsing, decision reasoning, copilot chat)
 - **Blockchain Data**: Etherscan API, CoinGecko API
-- **Storage**: 0G Decentralized Storage (@0glabs/0g-ts-sdk)
+- **Storage**: 0G Decentralized Storage (`@0gfoundation/0g-storage-ts-sdk`)
 
 ### Project Structure
 
@@ -78,8 +75,8 @@ virgil/
 │   │   ├── shared/            # StatusBadge, HashDisplay, Toast, etc.
 │   │   └── providers.tsx      # Wagmi + RainbowKit providers
 │   ├── lib/
-│   │   ├── 0g/               # 0G SDK client and storage helpers
-│   │   ├── ai/               # Claude integration (parse, evaluate, copilot)
+│   │   ├── 0g/               # 0G SDK Indexer client and storage helpers
+│   │   ├── ai/               # Groq Llama 3 integration
 │   │   ├── crypto/           # SHA-256 hashing for records
 │   │   ├── data/             # Etherscan, CoinGecko wrappers
 │   │   ├── utils/            # Formatting, constants
@@ -93,8 +90,8 @@ virgil/
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/parse` | POST | Parse plain English instruction with Claude |
-| `/api/instructions` | POST, GET | Save/fetch instructions to/from 0G |
+| `/api/parse` | POST | Parse plain English instruction with Groq |
+| `/api/instructions` | POST, GET | Save/fetch instructions to/from 0G Indexer |
 | `/api/evaluate` | POST | Run agent evaluation cycle |
 | `/api/verify` | GET | Fetch and verify record from 0G |
 | `/api/copilot` | POST | Stream AI copilot responses |
@@ -103,26 +100,25 @@ virgil/
 
 1. **Homepage (0:00-0:15)**: Show the hero, explain the value proposition — "Every agent decision written permanently to 0G"
 2. **Connect Wallet (0:15-0:25)**: Connect with RainbowKit, redirect to dashboard
-3. **Create Instruction (0:25-0:45)**: Type a plain English instruction like "Alert me if ETH price drops below $2000", watch Claude parse it, confirm activation
-4. **Agent Activity (0:45-1:05)**: Click "Check Now" to trigger immediate evaluation, show the record being created and stored on 0G
+3. **Create Instruction (0:25-0:45)**: Type a plain English instruction like "Alert me if ETH price drops below $2000", watch Groq parse it instantly, confirm activation
+4. **Agent Activity (0:45-1:05)**: Click "Check Now" to trigger immediate evaluation, show the record being created and stored via the 0G Indexer
 5. **Verification Page (1:05-1:30)**: Click "View proof" to open the public verification page — no wallet required. Show the hash verification, 0G storage key, and cryptographic integrity proof
 
 ## Decisions Made
 
 1. **0G Fallback**: When 0G is not configured, the app uses an in-memory store with clear warnings. This allows demoing without 0G credentials while keeping the 0G integration real and toggle-ready.
-2. **Streaming Copilot**: The copilot uses Next.js streaming API for real-time responses rather than loading states.
-3. **Polling-based Agent**: Since this is a web app (not a service), the agent runs via 30-second polling when the dashboard is open. This is the pragmatic v1 approach.
-4. **Recharts deferred**: The spec mentioned Recharts for timeline visualization but this was deprioritized in favor of the core happy path (instruction → evaluate → verify).
-5. **QR Code deferred**: `qrcode.react` is in dependencies but QR generation on the certificate was deprioritized for the core demo flow.
+2. **Indexer Implementation**: Completed full migration to `@0gfoundation/0g-storage-ts-sdk` Indexer API using Merkle trees for decentralized file indexing.
+3. **Groq Llama 3**: Swapped Anthropic Claude to Groq for near-instant inference, drastically reducing agent latency.
+4. **Polling-based Agent**: Since this is a web app (not a service), the agent runs via 30-second polling when the dashboard is open. This is the pragmatic v1 approach.
+5. **Recharts deferred**: The spec mentioned Recharts for timeline visualization but this was deprioritized in favor of the core happy path (instruction → evaluate → verify).
 
 ## Next Steps to Complete
 
-1. **Add real 0G read functionality**: The 0G SDK download flow requires tx hashes for retrieval. Implement proper indexing.
+1. **Telegram Bot Notifications**: Integrate a Telegram bot to send real-time alerts when agent actions occur.
 2. **Add Recharts timeline visualization**: For showing agent activity over time.
 3. **Add QR code to certificate**: Use `qrcode.react` for the verification URL.
-4. **Implement database fallback**: Add PostgreSQL/MongoDB as a caching layer for faster reads.
-5. **Add more condition types**: Implement `dao_event` and `contract_interaction` evaluators.
-6. **Background service**: Convert polling to a proper background job system.
+4. **Add more condition types**: Implement `dao_event` and `contract_interaction` evaluators.
+5. **Background service**: Convert polling to a proper background job system.
 
 ## License
 
