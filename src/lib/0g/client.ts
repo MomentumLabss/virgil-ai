@@ -35,7 +35,7 @@ export async function initOGClient(): Promise<void> {
   }
 
   try {
-    const { Indexer, ZgFile, Uploader } = await import("@0gfoundation/0g-ts-sdk");
+    const { Indexer, ZgFile, Uploader } = await import("@0gfoundation/0g-storage-ts-sdk");
 
     const uploader = new Uploader(storageRpc, rpcUrl, privateKey);
 

@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { AlertTriangle } from "lucide-react";
+
 import { Instruction, AgentRecord, AgentStatus } from "@/types";
 import { POLL_INTERVAL_MS } from "@/lib/utils/constants";
 import { Navbar } from "@/components/layout/Navbar";
