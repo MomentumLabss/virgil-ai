@@ -24,32 +24,35 @@ export function Hero() {
 
   return (
     <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
-      {/* Layered background glows */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
+        {/* Base dark gradient */}
         <div
           className="absolute inset-0"
-          style={{ background: "var(--gradient-hero)" }}
-        />
-        {/* Grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(124, 92, 252, 0.5) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(124, 92, 252, 0.5) 1px, transparent 1px)
-            `,
-            backgroundSize: "60px 60px",
+          style={{ 
+            background: "radial-gradient(circle at 50% 0%, #110d3a 0%, #0a0a0b 60%, #000000 100%)" 
           }}
         />
-        {/* Orb decorations */}
+        
+        {/* Giant background logo */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.04] mix-blend-screen">
+          <div className="scale-[3] sm:scale-[5] md:scale-[7] lg:scale-[9]">
+            <VirgilLogo size={120} animated={true} />
+          </div>
+        </div>
+
+        {/* Ambient glows */}
         <div
-          className="absolute -top-40 -right-40 w-96 h-96 rounded-full blur-3xl opacity-20"
-          style={{ background: "radial-gradient(circle, #7c5cfc, transparent)" }}
+          className="absolute top-1/4 -right-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-[0.15]"
+          style={{ background: "radial-gradient(circle, #7c5cfc, transparent 60%)" }}
         />
         <div
-          className="absolute bottom-0 -left-40 w-80 h-80 rounded-full blur-3xl opacity-10"
-          style={{ background: "radial-gradient(circle, #b06cff, transparent)" }}
+          className="absolute -bottom-20 -left-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-[0.1]"
+          style={{ background: "radial-gradient(circle, #b06cff, transparent 60%)" }}
         />
+        
+        {/* Subtle top vignette */}
+        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#0a0a0b] to-transparent opacity-60" />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -59,24 +62,6 @@ export function Hero() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="space-y-8"
         >
-          {/* Large animated logo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.05, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="flex justify-center"
-          >
-            <div
-              className="p-5 rounded-3xl"
-              style={{
-                background: "rgba(124, 92, 252, 0.06)",
-                border: "1px solid rgba(124, 92, 252, 0.15)",
-                boxShadow: "0 0 60px rgba(124, 92, 252, 0.12), 0 0 120px rgba(124, 92, 252, 0.06)",
-              }}
-            >
-              <VirgilLogo size={72} animated={true} />
-            </div>
-          </motion.div>
 
           {/* Badge */}
           <motion.div
