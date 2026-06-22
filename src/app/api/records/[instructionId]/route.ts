@@ -3,7 +3,7 @@ import { AgentRecord } from "@/types";
 import { listKeysFromOG, readFromOG } from "@/lib/0g/storage";
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ instructionId: string }> }
 ) {
   try {

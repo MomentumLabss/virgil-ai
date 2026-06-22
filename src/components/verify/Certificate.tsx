@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, AlertTriangle, Copy, Check, Shield } from "lucide-react";
-import QRCode from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react";
 import { VerificationCertificate as CertType } from "@/types";
 import { OG_EXPLORER_URL } from "@/lib/utils/constants";
 import {
@@ -227,7 +227,7 @@ export function Certificate({ certificate, verificationUrl }: CertificateProps) 
         <div className="flex flex-col items-center pt-6 border-t border-[var(--virgil-border-soft)]">
           <div className="bg-white p-3 rounded-xl border border-[var(--virgil-border-soft)] shadow-sm">
             {verificationUrl ? (
-              <QRCode value={verificationUrl} size={128} />
+              <QRCodeSVG value={verificationUrl} size={128} />
             ) : null}
           </div>
           <p className="text-xs text-[var(--virgil-text-muted)] mt-3">
