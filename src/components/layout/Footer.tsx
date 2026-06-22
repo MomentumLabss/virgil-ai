@@ -49,7 +49,7 @@ export function Footer() {
                 border: "1px solid rgba(124, 92, 252, 0.2)",
               }}
             >
-              Zero Cup 2026 ⚡
+              Zero Cup 2026
             </span>
           </div>
         </div>

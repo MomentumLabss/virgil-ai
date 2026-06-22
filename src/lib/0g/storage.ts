@@ -46,7 +46,7 @@ export async function writeToOG(
 
   // Real 0G upload
   try {
-    const { Uploader } = await import("@0glabs/0g-ts-sdk");
+    const { Uploader } = await import("@0gfoundation/0g-ts-sdk");
     const uploader = new Uploader(storageRpc, rpcUrl, privateKey);
 
     // Create a file from the serialized data
@@ -89,7 +89,7 @@ export async function readFromOG<T>(key: string): Promise<T | null> {
     const txHash = keyIndex.get(key);
     if (!txHash) return null;
 
-    const { Downloader } = await import("@0glabs/0g-ts-sdk");
+    const { Downloader } = await import("@0gfoundation/0g-ts-sdk");
     const downloader = new Downloader(storageRpc, rpcUrl);
     
     const fileBuffer = await downloader.downloadFile(txHash);
