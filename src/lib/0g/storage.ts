@@ -44,20 +44,43 @@ export async function writeToOG(
     return { txHash: `memory-${Date.now()}` };
   }
 
-  // Real 0G upload
+  // Real 0G upload using Indexer + ethers signer
   try {
-    const { Uploader } = await import("@0gfoundation/0g-storage-ts-sdk");
-    const uploader = new Uploader(storageRpc, rpcUrl, privateKey);
+    const { Indexer } = await import("@0gfoundation/0g-storage-ts-sdk");
+    const { ethers } = await import("ethers");
 
-    // Create a file from the serialized data
-    const blob = new Blob([serialized], { type: "application/json" });
-    const file = new File([blob], `${key}.json`);
+    const provider = new ethers.JsonRpcProvider(rpcUrl);
+    const signer = new ethers.Wallet(privateKey, provider);
+    const indexer = new Indexer(storageRpc);
 
-    const result = await uploader.uploadFile(file);
-    if (result) {
-      keyIndex.set(key, result);
+    // Create a temporary file path for the data
+    const fs = await import("fs");
+    const path = await import("path");
+    const os = await import("os");
+
+    const tmpDir = os.tmpdir();
+    const tmpFile = path.join(tmpDir, `virgil-${Date.now()}.json`);
+    fs.writeFileSync(tmpFile, serialized);
+
+    try {
+      const { ZgFile } = await import("@0gfoundation/0g-storage-ts-sdk");
+      const zgFile = await ZgFile.fromFilePath(tmpFile);
+      await zgFile.merkleTree();
+
+      const [tx, err] = await indexer.upload(zgFile, rpcUrl, signer);
+
+      await zgFile.close();
+
+      if (err === null && tx) {
+        keyIndex.set(key, tx);
+        return { txHash: tx };
+      }
+
+      return { txHash: null };
+    } finally {
+      // Clean up temp file
+      try { fs.unlinkSync(tmpFile); } catch { /* ignore */ }
     }
-    return { txHash: result || null };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     throw new OGError(
@@ -89,15 +112,24 @@ export async function readFromOG<T>(key: string): Promise<T | null> {
     const txHash = keyIndex.get(key);
     if (!txHash) return null;
 
-    const { Downloader } = await import("@0gfoundation/0g-storage-ts-sdk");
-    const downloader = new Downloader(storageRpc, rpcUrl);
-    
-    const fileBuffer = await downloader.downloadFile(txHash);
-    if (!fileBuffer) return null;
-    
-    // The downloader returns the file content as an ArrayBuffer or Buffer
-    const jsonStr = new TextDecoder().decode(fileBuffer);
-    return JSON.parse(jsonStr) as T;
+    const { Indexer } = await import("@0gfoundation/0g-storage-ts-sdk");
+    const fs = await import("fs");
+    const path = await import("path");
+    const os = await import("os");
+
+    const indexer = new Indexer(storageRpc);
+    const tmpDir = os.tmpdir();
+    const tmpFile = path.join(tmpDir, `virgil-dl-${Date.now()}.json`);
+
+    try {
+      const err = await indexer.download(txHash, tmpFile, true);
+      if (err !== null) return null;
+
+      const content = fs.readFileSync(tmpFile, "utf-8");
+      return JSON.parse(content) as T;
+    } finally {
+      try { fs.unlinkSync(tmpFile); } catch { /* ignore */ }
+    }
   } catch {
     return null;
   }

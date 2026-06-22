@@ -4,6 +4,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Silence Turbopack/webpack conflict warning in Next.js 16+
+  turbopack: {},
   webpack: (config) => {
     // Silence known false-positive "module not found" warnings from
     // @metamask/sdk (React Native storage) and WalletConnect (pino-pretty)

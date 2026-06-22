@@ -35,14 +35,18 @@ export async function initOGClient(): Promise<void> {
   }
 
   try {
-    const { Indexer, ZgFile, Uploader } = await import("@0gfoundation/0g-storage-ts-sdk");
+    const { Indexer, ZgFile } = await import("@0gfoundation/0g-storage-ts-sdk");
+    const { ethers } = await import("ethers");
 
-    const uploader = new Uploader(storageRpc, rpcUrl, privateKey);
+    const provider = new ethers.JsonRpcProvider(rpcUrl);
+    const signer = new ethers.Wallet(privateKey, provider);
+    const indexer = new Indexer(storageRpc);
 
     clientInstance = {
-      indexer: new Indexer(storageRpc),
-      uploader,
+      indexer,
+      signer,
       ZgFile,
+      rpcUrl,
     };
 
     isConfigured = true;
