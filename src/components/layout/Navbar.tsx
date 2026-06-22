@@ -2,31 +2,43 @@
 
 import Link from "next/link";
 import { useAccount } from "wagmi";
-import { Shield } from "lucide-react";
 import { WalletButton } from "@/components/shared/WalletButton";
+import { VirgilLogo } from "@/components/shared/VirgilLogo";
 
 export function Navbar() {
   const { isConnected } = useAccount();
 
   return (
-    <nav className="sticky top-0 z-40 glass border-b border-[var(--virgil-border-soft)]">
+    <nav className="sticky top-0 z-40 glass">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+          {/* Logo */}
           <Link
             href="/"
             className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
           >
-            <Shield className="w-6 h-6 text-[var(--virgil-accent)]" />
-            <span className="text-lg font-semibold tracking-tight text-[var(--virgil-text)]">
+            <VirgilLogo size={28} animated={true} />
+            <span className="text-lg font-bold tracking-tight text-[var(--virgil-text)]">
               Virgil
+            </span>
+            <span
+              className="hidden sm:inline-block text-xs px-1.5 py-0.5 rounded font-semibold"
+              style={{
+                background: "rgba(124, 92, 252, 0.15)",
+                color: "#b06cff",
+                border: "1px solid rgba(124, 92, 252, 0.25)",
+              }}
+            >
+              v1.0
             </span>
           </Link>
 
-          <div className="flex items-center gap-4">
+          {/* Right side */}
+          <div className="flex items-center gap-3">
             {isConnected && (
               <Link
                 href="/dashboard"
-                className="text-sm text-[var(--virgil-text-muted)] hover:text-[var(--virgil-accent)] transition-colors px-3 py-2 rounded-button"
+                className="hidden sm:inline-flex text-sm font-medium text-[var(--virgil-text-secondary)] hover:text-[var(--virgil-accent)] transition-colors px-3 py-2 rounded-lg hover:bg-[var(--virgil-glow)]"
               >
                 Dashboard
               </Link>

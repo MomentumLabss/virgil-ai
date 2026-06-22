@@ -1,43 +1,39 @@
-const COINGECKO_API_URL = "https://api.coingecko.com/api/v3";
-
 export async function getTokenPrice(
   tokenId: string,
-  currency = "usd"
+  currency = "USDT"
 ): Promise<number | null> {
   try {
-    const url = `${COINGECKO_API_URL}/simple/price?ids=${tokenId}&vs_currencies=${currency}`;
+    const symbol = `${tokenId.toUpperCase()}${currency.toUpperCase()}`;
+    const url = `https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`;
     const res = await fetch(url);
-    const data = (await res.json()) as Record<
-      string,
-      Record<string, number>
-    >;
-
-    return data[tokenId]?.[currency] ?? null;
+    
+    if (!res.ok) return null;
+    
+    const data = await res.json() as { price: string };
+    return parseFloat(data.price);
   } catch {
     return null;
   }
 }
 
 export async function getETHPrice(): Promise<number | null> {
-  return getTokenPrice("ethereum", "usd");
+  return getTokenPrice("ETH", "USDT");
 }
 
-// Map common token symbols to CoinGecko IDs
+// Map common token symbols to Binance base symbols
 const TOKEN_ID_MAP: Record<string, string> = {
-  eth: "ethereum",
-  ethereum: "ethereum",
-  btc: "bitcoin",
-  bitcoin: "bitcoin",
-  usdc: "usd-coin",
-  usdt: "tether",
-  dai: "dai",
-  link: "chainlink",
-  uni: "uniswap",
-  aave: "aave",
-  matic: "matic-network",
-  pol: "polygon-ecosystem-token",
+  eth: "ETH",
+  ethereum: "ETH",
+  btc: "BTC",
+  bitcoin: "BTC",
+  usdc: "USDC", 
+  link: "LINK",
+  uni: "UNI",
+  aave: "AAVE",
+  matic: "MATIC",
+  pol: "POL",
 };
 
 export function getTokenId(symbol: string): string | null {
-  return TOKEN_ID_MAP[symbol.toLowerCase()] || null;
+  return TOKEN_ID_MAP[symbol.toLowerCase()] || symbol.toUpperCase();
 }
