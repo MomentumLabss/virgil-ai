@@ -1,6 +1,6 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { mainnet, sepolia } from "wagmi/chains";
-import { createConfig, http } from "wagmi";
+import { http } from "wagmi";
 
 export const config = getDefaultConfig({
   appName: "Virgil",
