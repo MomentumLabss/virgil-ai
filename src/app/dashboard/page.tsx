@@ -36,15 +36,18 @@ export default function DashboardPage() {
 
   // Redirect if not connected
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
     if (!isConnected && !address) {
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         if (!isConnected) {
           showToast("Please connect your wallet to access the dashboard", "info");
           router.push("/");
         }
       }, 2000);
-      return () => clearTimeout(timer);
     }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [isConnected, address, router]);
 
   // Fetch instructions
