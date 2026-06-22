@@ -72,8 +72,9 @@ export async function writeToOG(
       await zgFile.close();
 
       if (err === null && tx) {
-        keyIndex.set(key, tx);
-        return { txHash: tx };
+        const hash = "txHash" in tx ? tx.txHash : String(tx);
+        keyIndex.set(key, hash);
+        return { txHash: hash };
       }
 
       return { txHash: null };
