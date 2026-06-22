@@ -24,35 +24,22 @@ export function Hero() {
 
   return (
     <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
-      {/* Dynamic Background */}
-      <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
-        {/* Base dark gradient */}
-        <div
-          className="absolute inset-0"
-          style={{ 
-            background: "radial-gradient(circle at 50% 0%, #110d3a 0%, #0a0a0b 60%, #000000 100%)" 
+      {/* Absolute void background */}
+      <div className="absolute inset-0 bg-black pointer-events-none overflow-hidden">
+        {/* Subtle purple spotlight from top center */}
+        <div 
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] opacity-[0.15]"
+          style={{
+            background: "radial-gradient(ellipse at top, #7c5cfc 0%, transparent 70%)"
           }}
         />
         
-        {/* Giant background logo */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.04] mix-blend-screen">
-          <div className="scale-[3] sm:scale-[5] md:scale-[7] lg:scale-[9]">
+        {/* Faded giant logo watermark */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.02] mix-blend-screen pointer-events-none">
+          <div className="scale-[4] sm:scale-[6] md:scale-[8]">
             <VirgilLogo size={120} animated={true} />
           </div>
         </div>
-
-        {/* Ambient glows */}
-        <div
-          className="absolute top-1/4 -right-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-[0.15]"
-          style={{ background: "radial-gradient(circle, #7c5cfc, transparent 60%)" }}
-        />
-        <div
-          className="absolute -bottom-20 -left-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-[0.1]"
-          style={{ background: "radial-gradient(circle, #b06cff, transparent 60%)" }}
-        />
-        
-        {/* Subtle top vignette */}
-        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#0a0a0b] to-transparent opacity-60" />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -21,16 +21,6 @@ export function Navbar() {
             <span className="text-lg font-bold tracking-tight text-[var(--virgil-text)]">
               Virgil
             </span>
-            <span
-              className="hidden sm:inline-block text-xs px-1.5 py-0.5 rounded font-semibold"
-              style={{
-                background: "rgba(124, 92, 252, 0.15)",
-                color: "#b06cff",
-                border: "1px solid rgba(124, 92, 252, 0.25)",
-              }}
-            >
-              v1.0
-            </span>
           </Link>
 
           {/* Right side */}
