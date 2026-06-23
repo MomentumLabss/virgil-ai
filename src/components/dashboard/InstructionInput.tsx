@@ -114,6 +114,15 @@ export function InstructionInput({
         throw new Error(err.error || "Save failed");
       }
 
+      const data = (await res.json()) as { instruction: any };
+      
+      // Save to localStorage immediately to prevent Vercel serverless memory loss
+      const localKey = `virgil_instructions_${walletAddress}`;
+      const existing = localStorage.getItem(localKey);
+      const instructions = existing ? JSON.parse(existing) : [];
+      instructions.unshift(data.instruction);
+      localStorage.setItem(localKey, JSON.stringify(instructions));
+
       showToast("Instruction activated! Virgil is now monitoring.", "success");
       setInstruction("");
       setParsed(null);

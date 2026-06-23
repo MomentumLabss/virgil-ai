@@ -55,15 +55,29 @@ export default function DashboardPage() {
     setIsLoadingInstructions(true);
     try {
       const res = await fetch(`/api/instructions?wallet=${address}`);
-      if (!res.ok) {
-        const err = (await res.json()) as { error?: string };
-        if (err.error?.includes("0G")) {
-          window.dispatchEvent(new Event("og-error"));
-        }
-        return;
+      let fetchedInstructions: Instruction[] = [];
+      
+      if (res.ok) {
+        const data = (await res.json()) as { instructions: Instruction[] };
+        fetchedInstructions = data.instructions;
       }
-      const data = (await res.json()) as { instructions: Instruction[] };
-      setInstructions(data.instructions);
+      
+      // Merge with localStorage to prevent Vercel serverless memory loss
+      const localKey = `virgil_instructions_${address}`;
+      const localData = localStorage.getItem(localKey);
+      let localInstructions: Instruction[] = localData ? JSON.parse(localData) : [];
+      
+      const merged = [...fetchedInstructions];
+      for (const localInst of localInstructions) {
+        if (!merged.find(i => i.id === localInst.id)) {
+          merged.push(localInst);
+        }
+      }
+      
+      merged.sort((a, b) => b.createdAt - a.createdAt);
+      setInstructions(merged);
+      localStorage.setItem(localKey, JSON.stringify(merged));
+      
     } catch {
       window.dispatchEvent(new Event("og-error"));
     } finally {
@@ -76,10 +90,13 @@ export default function DashboardPage() {
     if (!address) return;
     setIsLoadingRecords(true);
     try {
-      // TODO: implement dedicated records endpoint instead of extracting from instructions
-      // For now, we'll use the instructions we already have
-      const allRecords: AgentRecord[] = [];
-      setRecords(allRecords);
+      const localKey = `virgil_records_${address}`;
+      const localData = localStorage.getItem(localKey);
+      if (localData) {
+        setRecords(JSON.parse(localData));
+      } else {
+        setRecords([]);
+      }
     } catch {
       // silently fail
     } finally {
@@ -108,7 +125,11 @@ export default function DashboardPage() {
 
         if (res.ok) {
           const data = (await res.json()) as { record: AgentRecord };
-          setRecords((prev) => [data.record, ...prev]);
+          setRecords((prev) => {
+            const updated = [data.record, ...prev];
+            localStorage.setItem(`virgil_records_${address}`, JSON.stringify(updated));
+            return updated;
+          });
           setAgentStatus((prev) => ({
             ...prev,
             totalRecords: prev.totalRecords + 1,
