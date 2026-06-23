@@ -38,6 +38,22 @@ Because Virgil logs every evaluation to the **0G Decentralized Storage Network**
 
 ---
 
+## How to Verify (For Judges & Users)
+
+If you're judging this hackathon (or just a user who wants to trust but verify), finding the proof is super easy. You don't even need to connect a wallet.
+
+**Where to find the verification link:**
+1. **From the Dashboard:** When Virgil evaluates an instruction, a new activity card pops up under your active tasks. Expand that card, and you'll see a "View proof" link with a little external link icon.
+2. **From CoVirgil (The AI Chat):** If you ask CoVirgil to trigger a task manually or summarize activity, it will directly hand you the unique `virgil-ai-one.vercel.app/verify/[id]` link right in the chat.
+
+**How to verify the 0G integration:**
+1. Click the verification link. It takes you to a public "Verification Certificate" page.
+2. Look at the data: You'll see exactly what instruction the AI followed, the live data it observed, and the action it decided to take. 
+3. Scroll to the bottom to find the **Record Hash**, the **0G Storage Key**, and the actual **0G Transaction Hash**.
+4. To prove I didn't fake this in a database, just click the **"View on 0G Explorer"** hyperlink under the transaction hash. It will take you directly to the official 0G block explorer, where you can verify the transaction lives permanently on their decentralized storage network!
+
+---
+
 ## Stack
 
 - **Framework**: Next.js 15 (App Router) + TypeScript
