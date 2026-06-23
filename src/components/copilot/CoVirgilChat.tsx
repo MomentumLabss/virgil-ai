@@ -210,7 +210,7 @@ export function CoVirgilChat() {
                   )}
                 </div>
                 <div
-                  className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-sm leading-relaxed ${
+                  className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-sm leading-relaxed break-words whitespace-pre-wrap ${
                     msg.role === "user"
                       ? "bg-[var(--virgil-accent)] text-white rounded-br-md"
                       : "bg-[var(--virgil-bg-alt)] text-gray-200 rounded-bl-md border border-[var(--virgil-border-soft)] shadow-sm"
