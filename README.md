@@ -1,125 +1,136 @@
-# Virgil
+﻿# Virgil
 
 **Your AI Agent Acts. 0G Remembers. You Have Proof.**
 
-Virgil is an AI-powered agent that monitors Web3 conditions on your behalf — and writes a permanent, tamper-proof, cryptographically verifiable audit trail of every decision to 0G decentralized storage.
+> Set a condition in plain English. Virgil monitors Web3, takes action, and writes every decision permanently to 0G decentralized storage - where no one can alter or delete it.
 
-## Quick Start
+Live: [virgil-ai-one.vercel.app](https://virgil-ai-one.vercel.app)
+
+---
+
+## What is this?
+
+I built Virgil because I got tired of manually watching wallets, refreshing price charts, and reacting too late to on-chain events. The idea is simple: tell Virgil what to watch in plain English, and it handles the rest. Every decision the agent makes gets written permanently to [0G](https://0g.ai) decentralized storage so there is a cryptographically verifiable audit trail - no company server, no middleman.
+
+Some examples of instructions that work right now:
+
+- *"Alert me if wallet 0x... moves more than 5 ETH"*
+- *"Alert me if ETH price drops below $2000"*
+- *"Watch wallet 0x... and notify me of any transaction"*
+
+The AI understands plain English. You do not need to write queries or code anything.
+
+---
+
+## Stack
+
+- **Framework**: Next.js 15 (App Router) + TypeScript
+- **Wallet**: RainbowKit + Wagmi v2
+- **AI**: Groq LPU - llama-3.3-70b-versatile for near-instant instruction parsing and the Virgil Copilot chat
+- **Blockchain Data**: Etherscan API + CoinGecko API
+- **Storage**: 0G Decentralized Storage via @0gfoundation/0g-storage-ts-sdk
+- **Styling**: TailwindCSS + Framer Motion
+
+---
+
+## Running it locally
 
 ### Prerequisites
 
-- Node.js 18+ and npm
-- API keys for: Groq, Etherscan, 0G (optional - app works in demo mode without 0G)
+- Node.js 18+
+- A Groq API key (free at console.groq.com)
+- An Etherscan API key (free at etherscan.io/apis)
+- Optional: a 0G wallet private key for real decentralized storage
 
-### Installation
+### Setup
 
-```bash
-# 1. Navigate to the project
-cd virgil
+    git clone https://github.com/MomentumLabss/virgil-ai
+    cd virgil-ai/virgil
+    npm install
+    cp .env.local.example .env.local
+    npm run dev
 
-# 2. Install dependencies
-npm install
-
-# 3. Set up environment variables
-cp .env.local.example .env.local
-# Edit .env.local and add your API keys
-
-# 4. Run the development server
-npm run dev
-
-# 5. Open http://localhost:3000
-```
+Open http://localhost:3000.
 
 ### Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `GROQ_API_KEY` | Yes | Groq API key for extremely fast Llama 3 inference (instruction parsing and copilot) |
-| `ETHERSCAN_API_KEY` | Yes | For Ethereum blockchain data |
-| `0G_PRIVATE_KEY` | No | 0G wallet private key (enables real 0G storage via Indexer) |
-| `NEXT_PUBLIC_APP_URL` | No | App URL (default: http://localhost:3000) |
+    GROQ_API_KEY=your_groq_key_here
+    ETHERSCAN_API_KEY=your_etherscan_key_here
+    OG_PRIVATE_KEY=your_0g_wallet_private_key
+    NEXT_PUBLIC_0G_RPC_URL=https://evmrpc-testnet.0g.ai
+    NEXT_PUBLIC_0G_STORAGE_RPC=https://indexer-storage-testnet-standard.0g.ai
 
-## Architecture
+Without the 0G keys the app still runs fully - it stores data in memory for testing. You will see a banner in the dashboard when 0G is unavailable.
 
-### Tech Stack
-- **Frontend**: Next.js 15 (App Router), React 18, TypeScript, TailwindCSS, Framer Motion, Recharts
-- **Wallet**: RainbowKit + Wagmi v2 + Viem
-- **AI**: Groq Llama 3 API (instruction parsing, decision reasoning, copilot chat)
-- **Blockchain Data**: Etherscan API, CoinGecko API
-- **Storage**: 0G Decentralized Storage (`@0gfoundation/0g-storage-ts-sdk`)
+---
 
-### Project Structure
+## Project Structure
 
-```
-virgil/
-├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── api/               # API Routes
-│   │   │   ├── parse/         # Parse plain English instructions
-│   │   │   ├── instructions/  # CRUD for instructions on 0G
-│   │   │   ├── evaluate/      # Agent evaluation cycle
-│   │   │   ├── verify/        # Public record verification
-│   │   │   └── copilot/       # AI copilot streaming
-│   │   ├── dashboard/         # Main dashboard page
-│   │   ├── verify/            # Public verification page
-│   │   ├── layout.tsx         # Root layout with providers
-│   │   ├── page.tsx           # Homepage
-│   │   ├── error.tsx          # Error boundary
-│   │   └── not-found.tsx      # 404 page
-│   ├── components/
-│   │   ├── home/              # Hero, HowItWorks, WhyVirgil
-│   │   ├── dashboard/         # InstructionInput, InstructionCard, etc.
-│   │   ├── copilot/           # AI chat panel
-│   │   ├── verify/            # Certificate component
-│   │   ├── layout/            # Navbar, Footer
-│   │   ├── shared/            # StatusBadge, HashDisplay, Toast, etc.
-│   │   └── providers.tsx      # Wagmi + RainbowKit providers
-│   ├── lib/
-│   │   ├── 0g/               # 0G SDK Indexer client and storage helpers
-│   │   ├── ai/               # Groq Llama 3 integration
-│   │   ├── crypto/           # SHA-256 hashing for records
-│   │   ├── data/             # Etherscan, CoinGecko wrappers
-│   │   ├── utils/            # Formatting, constants
-│   │   └── wagmi.ts          # Wallet configuration
-│   ├── hooks/                # Custom React hooks
-│   ├── types/                # TypeScript interfaces
-│   └── styles/               # Global CSS with design tokens
-```
+    src/
+    app/
+      api/
+        parse/          # Groq: converts plain English to a structured instruction
+        instructions/   # Save and fetch instructions via 0G storage
+        evaluate/       # Agent evaluation - checks conditions against live data
+        verify/         # Public record verification (no wallet needed)
+        copilot/        # Streaming AI chat responses
+      dashboard/        # Main user dashboard
+      verify/           # Public proof/verification page
+      page.tsx          # Landing page
+    components/
+      home/             # Landing page sections
+      dashboard/        # Instruction input, cards, activity feed
+      copilot/          # Virgil Copilot chat panel
+      shared/           # Toast, badges, banners, etc.
+    lib/
+      0g/               # 0G SDK integration and storage helpers
+      ai/               # Groq integration (parse, evaluate, copilot)
+      data/             # Etherscan + CoinGecko API clients
+      utils/            # Formatting and constants
+    types/              # Shared TypeScript interfaces
 
-## API Routes
+---
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/parse` | POST | Parse plain English instruction with Groq |
-| `/api/instructions` | POST, GET | Save/fetch instructions to/from 0G Indexer |
-| `/api/evaluate` | POST | Run agent evaluation cycle |
-| `/api/verify` | GET | Fetch and verify record from 0G |
-| `/api/copilot` | POST | Stream AI copilot responses |
+## How it works
 
-## Demo Script (90 seconds)
+1. **Connect wallet** - RainbowKit handles EVM wallet connection. Your wallet address is your identity, no email or account needed.
+2. **Give an instruction** - Type what you want Virgil to watch. Groq AI parses it in under a second into a structured condition with a target, threshold, and action.
+3. **Agent monitors** - While the dashboard is open, Virgil polls every 30 seconds. It pulls live data from Etherscan or CoinGecko and checks your condition.
+4. **0G stores the proof** - Every evaluation gets written to 0G decentralized storage with a SHA-256 hash. The record is permanent and publicly verifiable.
+5. **Verify anytime** - Share the verification link with anyone. They can confirm what the agent decided, when, and that no one tampered with the record.
 
-1. **Homepage (0:00-0:15)**: Show the hero, explain the value proposition — "Every agent decision written permanently to 0G"
-2. **Connect Wallet (0:15-0:25)**: Connect with RainbowKit, redirect to dashboard
-3. **Create Instruction (0:25-0:45)**: Type a plain English instruction like "Alert me if ETH price drops below $2000", watch Groq parse it instantly, confirm activation
-4. **Agent Activity (0:45-1:05)**: Click "Check Now" to trigger immediate evaluation, show the record being created and stored via the 0G Indexer
-5. **Verification Page (1:05-1:30)**: Click "View proof" to open the public verification page — no wallet required. Show the hash verification, 0G storage key, and cryptographic integrity proof
+---
 
-## Decisions Made
+## API Endpoints
 
-1. **0G Fallback**: When 0G is not configured, the app uses an in-memory store with clear warnings. This allows demoing without 0G credentials while keeping the 0G integration real and toggle-ready.
-2. **Indexer Implementation**: Completed full migration to `@0gfoundation/0g-storage-ts-sdk` Indexer API using Merkle trees for decentralized file indexing.
-3. **Groq Llama 3**: Swapped Anthropic Claude to Groq for near-instant inference, drastically reducing agent latency.
-4. **Polling-based Agent**: Since this is a web app (not a service), the agent runs via 30-second polling when the dashboard is open. This is the pragmatic v1 approach.
-5. **Recharts deferred**: The spec mentioned Recharts for timeline visualization but this was deprioritized in favor of the core happy path (instruction → evaluate → verify).
+| Route | Method | What it does |
+|-------|--------|--------------|
+| /api/parse | POST | Parse a plain English instruction using Groq |
+| /api/instructions | GET, POST | Fetch or save instructions to 0G |
+| /api/evaluate | POST | Run one evaluation cycle for an instruction |
+| /api/verify | GET | Fetch and verify a record from 0G |
+| /api/copilot | POST | Stream responses from the Virgil Copilot |
 
-## Next Steps to Complete
+---
 
-1. **Telegram Bot Notifications**: Integrate a Telegram bot to send real-time alerts when agent actions occur.
-2. **Add Recharts timeline visualization**: For showing agent activity over time.
-3. **Add QR code to certificate**: Use `qrcode.react` for the verification URL.
-4. **Add more condition types**: Implement `dao_event` and `contract_interaction` evaluators.
-5. **Background service**: Convert polling to a proper background job system.
+## Notes
+
+- **0G Testnet**: The 0G testnet can occasionally be unreachable - this is a network-level issue on 0G side, not a bug in Virgil. The app shows a clear warning banner when this happens and continues to function normally.
+- **Agent polling**: The agent runs while the dashboard tab is open. A background service for 24/7 monitoring is on the roadmap.
+- **Confidence scores**: When Groq parses an instruction it returns a confidence score. Anything below 70% triggers a clarification prompt before activation.
+
+---
+
+## What is next
+
+- Telegram bot notifications when agent conditions are triggered
+- Background monitoring service (so the tab does not need to stay open)
+- More condition types: DAO votes, contract events, NFT transfers
+- Activity timeline chart
+- Mobile app
+
+---
 
 ## License
 
-MIT — Built for Zero Cup 2026
+MIT - Built for the 0G Vibe Coding Tournament, Zero Cup 2026

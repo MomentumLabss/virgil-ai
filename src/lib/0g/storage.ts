@@ -16,6 +16,17 @@ function getMemoryKey(key: string): string {
   return `virgil:${key}`;
 }
 
+function updateMemoryIndex(key: string): void {
+  const parts = key.split("/");
+  for (let i = 1; i <= parts.length; i++) {
+    const prefix = parts.slice(0, i).join("/");
+    const existing = memoryIndex.get(prefix) || [];
+    if (!existing.includes(key)) {
+      memoryIndex.set(prefix, [...existing, key]);
+    }
+  }
+}
+
 export async function writeToOG(
   key: string,
   data: unknown
@@ -29,18 +40,7 @@ export async function writeToOG(
   if (!privateKey || !rpcUrl || !storageRpc) {
     const memKey = getMemoryKey(key);
     memoryStore.set(memKey, serialized);
-
-    // Update index
-    const parts = key.split("/");
-    for (let i = 1; i <= parts.length; i++) {
-      const prefix = parts.slice(0, i).join("/");
-      const existing = memoryIndex.get(prefix) || [];
-      if (!existing.includes(key)) {
-        memoryIndex.set(prefix, [...existing, key]);
-      }
-    }
-
-    // Return a fake tx hash to indicate memory storage
+    updateMemoryIndex(key);
     return { txHash: `memory-${Date.now()}` };
   }
 
@@ -77,17 +77,20 @@ export async function writeToOG(
         return { txHash: hash };
       }
 
-      return { txHash: null };
+      // Upload returned an error - fall back to memory
+      const memKey = getMemoryKey(key);
+      memoryStore.set(memKey, serialized);
+      updateMemoryIndex(key);
+      return { txHash: `memory-${Date.now()}` };
     } finally {
-      // Clean up temp file
       try { fs.unlinkSync(tmpFile); } catch { /* ignore */ }
     }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    throw new OGError(
-      `Failed to write to 0G: ${message}`,
-      "WRITE_FAILED"
-    );
+  } catch {
+    // 0G network is unreachable - save to memory so the user's work isn't lost
+    const memKey = getMemoryKey(key);
+    memoryStore.set(memKey, serialized);
+    updateMemoryIndex(key);
+    return { txHash: `memory-${Date.now()}` };
   }
 }
 
