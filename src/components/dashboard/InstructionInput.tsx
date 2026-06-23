@@ -17,6 +17,7 @@ interface ParsedResult {
   confidence: number;
   needsClarification: boolean;
   clarificationQuestion: string | null;
+  isQuestion: boolean;
 }
 
 interface InstructionInputProps {
