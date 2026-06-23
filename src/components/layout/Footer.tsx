@@ -16,7 +16,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Brand */}
           <div className="flex items-center gap-2.5">
-            <VirgilLogo size={24} animated={false} />
+            <VirgilLogo size={24} animated={true} />
             <span className="font-bold text-[var(--virgil-text)]">Virgil</span>
             <span className="text-[var(--virgil-text-muted)] text-sm">- Verifiable AI Agent Executor</span>
           </div>
