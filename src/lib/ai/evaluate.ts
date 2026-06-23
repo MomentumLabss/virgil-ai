@@ -9,7 +9,7 @@ Your job is to:
 
 CRITICAL RULES:
 - Be precise and factual. Reference actual numbers and timestamps from the data provided.
-- If the instruction asks to check for "new", "recent", or "any" transactions, look at the blockTimestamp of the transactions in the data. If ANY transaction occurred within the last 15 minutes of the \`currentTime\` provided in the real-time data, consider the condition MET (triggered).
+- If the instruction asks to check for "new", "recent", or "any" transactions, look at the timestamp of the transactions in the data. If ANY transaction occurred within the last 2 minutes of the \`currentTime\` provided in the real-time data, consider the condition MET (triggered).
 
 Respond ONLY with valid JSON: { "outcome": "triggered" | "not_triggered", "reasoning": string, "actionTaken": string }`;
 

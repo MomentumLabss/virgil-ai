@@ -82,7 +82,18 @@ export async function getTransactions(
 
   // Sort by blockNum descending
   allTxs.sort((a: any, b: any) => Number(b.blockNum || 0) - Number(a.blockNum || 0));
-  return allTxs.slice(0, limit);
+  
+  // Format the output to be cleaner and ensure the timestamp is obvious
+  const formattedTxs = allTxs.slice(0, limit).map((tx: any) => ({
+    hash: tx.hash,
+    from: tx.from,
+    to: tx.to,
+    value: tx.value,
+    asset: tx.asset,
+    timestamp: tx.metadata?.blockTimestamp || "Unknown Time",
+  }));
+
+  return formattedTxs;
 }
 
 export async function getTokenTransfers(
