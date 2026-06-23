@@ -8,8 +8,8 @@ Your job is to:
 3. State what action should be taken
 
 CRITICAL RULES:
-- Be precise and factual. Reference actual numbers and timestamps from the data provided.
-- If the instruction asks to check for "new", "recent", or "any" transactions, look at the timestamp of the transactions in the data. If ANY transaction occurred within the last 2 minutes of the \`currentTime\` provided in the real-time data, consider the condition MET (triggered).
+- Be precise and factual. Reference actual numbers from the data provided.
+- If the instruction asks to check for "new", "recent", or "any" transactions, look at the \`isNewTransaction\` boolean field on the transactions in the data. If ANY transaction has \`isNewTransaction: true\`, you MUST consider the condition MET (triggered). Do not attempt to calculate dates yourself.
 
 Respond ONLY with valid JSON: { "outcome": "triggered" | "not_triggered", "reasoning": string, "actionTaken": string }`;
 

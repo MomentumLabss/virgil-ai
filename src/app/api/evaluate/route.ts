@@ -34,8 +34,23 @@ export async function POST(req: NextRequest) {
               getETHBalance(target),
               getTransactions(target, 5),
             ]);
+            
+            const now = Date.now();
+            const enhancedTxs = (txs as any[]).map(tx => {
+              if (tx.timestamp && tx.timestamp !== "Unknown Time") {
+                const txTime = new Date(tx.timestamp).getTime();
+                const diffSeconds = Math.floor((now - txTime) / 1000);
+                return {
+                  ...tx,
+                  secondsAgo: diffSeconds,
+                  isNewTransaction: diffSeconds <= 120
+                };
+              }
+              return tx;
+            });
+            
             realTimeData.balance = balance;
-            realTimeData.recentTransactions = txs;
+            realTimeData.recentTransactions = enhancedTxs;
             realTimeData.currentTime = new Date().toISOString();
           }
           break;
