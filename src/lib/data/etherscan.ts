@@ -1,34 +1,53 @@
-const ALCHEMY_KEY = process.env.ALCHEMY_API_KEY || "iE7gg2_53XfzahXwo87vT";
+const ETHERSCAN_API_URL = "https://api.etherscan.io/v2/api";
 
-const ALCHEMY_URLS = [
-  `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-  `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-  `https://arb-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-  `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-  `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`
+function getApiKey(): string {
+  const key = process.env.ETHERSCAN_API_KEY;
+  if (!key) {
+    throw new Error("ETHERSCAN_API_KEY is not configured");
+  }
+  return key;
+}
+
+async function fetchWithTimeout(url: string, timeoutMs = 4000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (err) {
+    clearTimeout(id);
+    throw err;
+  }
+}
+
+const SUPPORTED_CHAINS = [
+  1, // Ethereum Mainnet
+  11155111, // Sepolia Testnet
+  17000, // Holesky Testnet
+  10, // Optimism
+  42161, // Arbitrum
+  8453, // Base
+  137, // Polygon
+  56, // BSC
 ];
 
 export async function getETHBalance(address: string): Promise<string> {
+  const key = getApiKey();
   let totalWei = 0n;
 
-  for (const url of ALCHEMY_URLS) {
+  for (const chainId of SUPPORTED_CHAINS) {
     try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: 1,
-          method: "eth_getBalance",
-          params: [address, "latest"]
-        })
-      });
-      const data = await res.json();
-      if (data.result) {
-        totalWei += BigInt(data.result);
+      const url = `${ETHERSCAN_API_URL}?chainid=${chainId}&module=account&action=balance&address=${address}&tag=latest&apikey=${key}`;
+      const res = await fetchWithTimeout(url, 3000);
+      const data = (await res.json()) as { result: string; status: string; message: string };
+      if (data.status === "1") {
+        totalWei += BigInt(data.result || "0");
       }
+      // Small delay to prevent rate limit (5 req/sec)
+      await new Promise(resolve => setTimeout(resolve, 250));
     } catch {
-      // ignore
+      // ignore individual chain failures
     }
   }
 
@@ -39,41 +58,25 @@ export async function getTransactions(
   address: string,
   limit = 10
 ): Promise<unknown[]> {
+  const key = getApiKey();
   let allTxs: unknown[] = [];
 
-  for (const url of ALCHEMY_URLS) {
+  for (const chainId of SUPPORTED_CHAINS) {
     try {
-      const [resIn, resOut] = await Promise.all([
-        fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            jsonrpc: "2.0", id: 1, method: "alchemy_getAssetTransfers",
-            params: [{ fromBlock: "0x0", toBlock: "latest", toAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0xa" }]
-          })
-        }),
-        fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            jsonrpc: "2.0", id: 1, method: "alchemy_getAssetTransfers",
-            params: [{ fromBlock: "0x0", toBlock: "latest", fromAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0xa" }]
-          })
-        })
-      ]);
-
-      const dataIn = await resIn.json();
-      const dataOut = await resOut.json();
-
-      if (dataIn.result?.transfers) allTxs = [...allTxs, ...dataIn.result.transfers];
-      if (dataOut.result?.transfers) allTxs = [...allTxs, ...dataOut.result.transfers];
+      const url = `${ETHERSCAN_API_URL}?chainid=${chainId}&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${key}`;
+      const res = await fetchWithTimeout(url, 3000);
+      const data = (await res.json()) as { result: unknown[] | string; status: string; message: string };
+      if (data.status === "1" && Array.isArray(data.result)) {
+        const txsWithChain = data.result.map((tx: any) => ({ ...tx, chainId }));
+        allTxs = [...allTxs, ...txsWithChain];
+      }
+      await new Promise(resolve => setTimeout(resolve, 250));
     } catch {
-      // ignore
+      // ignore individual failures
     }
   }
 
-  // Sort by blockNum descending (proxy for timestamp)
-  allTxs.sort((a: any, b: any) => Number(b.blockNum || 0) - Number(a.blockNum || 0));
+  allTxs.sort((a: any, b: any) => Number(b.timeStamp || 0) - Number(a.timeStamp || 0));
   return allTxs.slice(0, limit);
 }
 
@@ -82,40 +85,27 @@ export async function getTokenTransfers(
   contractAddress?: string,
   limit = 10
 ): Promise<unknown[]> {
+  const key = getApiKey();
   let allTransfers: unknown[] = [];
 
-  for (const url of ALCHEMY_URLS) {
+  for (const chainId of SUPPORTED_CHAINS) {
     try {
-      const params: any = {
-        fromBlock: "0x0",
-        toBlock: "latest",
-        toAddress: address,
-        category: ["erc20"],
-        withMetadata: true,
-        maxCount: "0xa"
-      };
+      let url = `${ETHERSCAN_API_URL}?chainid=${chainId}&module=account&action=tokentx&address=${address}&sort=desc&apikey=${key}`;
       if (contractAddress) {
-        params.contractAddresses = [contractAddress];
+        url += `&contractaddress=${contractAddress}`;
       }
-
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: 1,
-          method: "alchemy_getAssetTransfers",
-          params: [params]
-        })
-      });
-      const data = await res.json();
-      if (data.result?.transfers) {
-        allTransfers = [...allTransfers, ...data.result.transfers];
+      const res = await fetchWithTimeout(url, 3000);
+      const data = (await res.json()) as { result: unknown[] | string; status: string; message: string };
+      if (data.status === "1" && Array.isArray(data.result)) {
+        const txsWithChain = data.result.map((tx: any) => ({ ...tx, chainId }));
+        allTransfers = [...allTransfers, ...txsWithChain];
       }
+      await new Promise(resolve => setTimeout(resolve, 250));
     } catch {
       // ignore
     }
   }
 
+  allTransfers.sort((a: any, b: any) => Number(b.timeStamp || 0) - Number(a.timeStamp || 0));
   return allTransfers.slice(0, limit);
 }
