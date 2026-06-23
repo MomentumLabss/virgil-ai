@@ -182,6 +182,9 @@ export default function DashboardPage() {
     pollIntervalRef.current = setInterval(() => {
       runEvaluation();
     }, POLL_INTERVAL_MS);
+    
+    // Fire the first evaluation immediately so the user doesn't wait 30s
+    runEvaluation();
 
     return () => {
       if (pollIntervalRef.current) {

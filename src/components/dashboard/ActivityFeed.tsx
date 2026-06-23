@@ -8,11 +8,9 @@ interface ActivityFeedProps {
   records: AgentRecord[];
   isLoading: boolean;
   isAgentRunning: boolean;
-}
-
 export function ActivityFeed({ records, isLoading, isAgentRunning }: ActivityFeedProps) {
-  // Show all records, but limit to the 50 most recent to prevent UI lag
-  const displayRecords = records.slice(0, 50);
+  // Show only triggered records on the main dashboard
+  const displayRecords = records.filter(r => r.outcome === "triggered");
 
   return (
     <div className="space-y-4">
