@@ -147,7 +147,7 @@ export function InstructionInput({
           placeholder="e.g. 'Alert me if wallet 0x... moves more than 5 ETH'"
           disabled={state === "parsing" || state === "saving"}
           rows={3}
-          className="w-full px-4 py-3 rounded-button border border-[var(--virgil-border-soft)] bg-black/50 text-white placeholder:text-gray-400 focus:border-[var(--virgil-accent)] focus:ring-1 focus:ring-[var(--virgil-accent)] outline-none resize-none disabled:opacity-50 transition-all text-sm"
+          className="w-full px-4 py-3 rounded-button border border-[var(--virgil-border-soft)] bg-black text-white caret-white focus:caret-[var(--virgil-accent)] placeholder:text-gray-400 focus:border-[var(--virgil-accent)] focus:ring-1 focus:ring-[var(--virgil-accent)] outline-none resize-none disabled:opacity-50 transition-all text-sm"
           maxLength={500}
         />
         <div className="absolute bottom-2 right-2 text-xs text-gray-500">
@@ -214,13 +214,27 @@ export function InstructionInput({
                 </p>
               </div>
             </div>
+            
+            {/* Quick Suggestions */}
+            <div className="flex flex-wrap gap-2 pt-1 pb-1">
+              {["Notify me", "Log it to 0G", "Alert me if it changes"].map((suggestion) => (
+                <button
+                  key={suggestion}
+                  onClick={() => setClarification(suggestion)}
+                  className="text-xs px-2.5 py-1.5 bg-white border border-[var(--virgil-border-soft)] rounded-full text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+
             <div className="flex items-center gap-2">
               <input
                 type="text"
                 value={clarification}
                 onChange={(e) => setClarification(e.target.value)}
                 placeholder="Your answer..."
-                className="flex-1 px-3 py-2 rounded-button border border-[var(--virgil-border-soft)] bg-white text-sm focus:border-[var(--virgil-accent)] outline-none"
+                className="flex-1 px-3 py-2 rounded-button border border-[var(--virgil-border-soft)] bg-white text-gray-900 text-sm focus:border-[var(--virgil-accent)] outline-none"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleClarify();
                 }}
