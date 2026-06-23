@@ -81,12 +81,15 @@ export async function getTransactions(
     }
   }
 
-  // Sort by blockNum
+  // Sort by timestamp across networks! blockNum is meaningless when mixing ETH, Arb, Polygon, etc.
   allTxs.sort((a: any, b: any) => {
+    const timeA = new Date(a.metadata?.blockTimestamp || 0).getTime();
+    const timeB = new Date(b.metadata?.blockTimestamp || 0).getTime();
+    
     if (order === "asc") {
-      return Number(a.blockNum || 0) - Number(b.blockNum || 0);
+      return timeA - timeB;
     }
-    return Number(b.blockNum || 0) - Number(a.blockNum || 0);
+    return timeB - timeA;
   });
   
   // Format the output to be cleaner and ensure the timestamp is obvious
@@ -143,6 +146,13 @@ export async function getTokenTransfers(
       // ignore
     }
   }
+
+  // Sort by timestamp across networks
+  allTransfers.sort((a: any, b: any) => {
+    const timeA = new Date(a.metadata?.blockTimestamp || 0).getTime();
+    const timeB = new Date(b.metadata?.blockTimestamp || 0).getTime();
+    return timeB - timeA; // desc
+  });
 
   return allTransfers.slice(0, limit);
 }
