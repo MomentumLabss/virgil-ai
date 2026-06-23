@@ -123,12 +123,26 @@ export default function DashboardPage() {
         });
 
         if (res.ok) {
-          const data = (await res.json()) as { record: AgentRecord };
+          const data = (await res.json()) as { record: AgentRecord, instruction: Instruction };
+          
+          // Update records
           setRecords((prev) => {
             const updated = [data.record, ...prev];
             localStorage.setItem(`virgil_records_${address}`, JSON.stringify(updated));
             return updated;
           });
+          
+          // Update instruction in localStorage to instantly reflect new status/lastCheckedAt
+          if (data.instruction) {
+            const localKey = `virgil_instructions_${address}`;
+            const existing = localStorage.getItem(localKey);
+            if (existing) {
+              let localInsts: Instruction[] = JSON.parse(existing);
+              localInsts = localInsts.map(i => i.id === data.instruction.id ? data.instruction : i);
+              localStorage.setItem(localKey, JSON.stringify(localInsts));
+            }
+          }
+          
           setAgentStatus((prev) => ({
             ...prev,
             totalRecords: prev.totalRecords + 1,
