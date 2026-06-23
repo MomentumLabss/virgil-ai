@@ -28,7 +28,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "getETHBalance",
-      description: "Fetches the current ETH balance for a specific wallet address across multiple networks. Returns the total balance in Wei.",
+      description: "Fetches the current ETH balance for a specific wallet address across multiple networks. Returns the total balance in ETH.",
       parameters: {
         type: "object",
         properties: {
@@ -112,12 +112,12 @@ export async function* streamCopilotResponse(
         if (toolCall.function.name === "getETHBalance") {
           try {
             const args = JSON.parse(toolCall.function.arguments);
-            const balanceWei = await getETHBalance(args.address);
+            const balanceEth = await getETHBalance(args.address);
             formattedMessages.push({
               tool_call_id: toolCall.id,
               role: "tool",
               name: "getETHBalance",
-              content: `Balance in Wei: ${balanceWei} (Note: 1 ETH = 10^18 Wei)`
+              content: `Balance in ETH: ${balanceEth}`
             });
           } catch (e) {
             formattedMessages.push({
