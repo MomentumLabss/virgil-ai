@@ -8,6 +8,19 @@ function getApiKey(): string {
   return key;
 }
 
+async function fetchWithTimeout(url: string, timeoutMs = 4000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (err) {
+    clearTimeout(id);
+    throw err;
+  }
+}
+
 const SUPPORTED_CHAINS = [
   1, // Ethereum Mainnet
   11155111, // Sepolia Testnet
@@ -24,7 +37,7 @@ export async function getETHBalance(address: string): Promise<string> {
   
   const promises = SUPPORTED_CHAINS.map(async (chainId) => {
     const url = `${ETHERSCAN_API_URL}?chainid=${chainId}&module=account&action=balance&address=${address}&tag=latest&apikey=${key}`;
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url);
     const data = (await res.json()) as { result: string; status: string; message: string };
     if (data.status !== "1") throw new Error(`Chain ${chainId} failed`);
     return BigInt(data.result || "0");
@@ -51,7 +64,7 @@ export async function getTransactions(
   
   const promises = SUPPORTED_CHAINS.map(async (chainId) => {
     const url = `${ETHERSCAN_API_URL}?chainid=${chainId}&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${key}`;
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url);
     const data = (await res.json()) as { result: unknown[] | string; status: string; message: string };
     if (data.status !== "1" || !Array.isArray(data.result)) return [];
     
@@ -86,7 +99,7 @@ export async function getTokenTransfers(
     if (contractAddress) {
       url += `&contractaddress=${contractAddress}`;
     }
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url);
     const data = (await res.json()) as { result: unknown[] | string; status: string; message: string };
     if (data.status !== "1" || !Array.isArray(data.result)) return [];
     

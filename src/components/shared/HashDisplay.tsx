@@ -31,7 +31,7 @@ export function HashDisplay({ hash, label, className }: HashDisplayProps) {
       <div className="flex items-center gap-2">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="font-mono text-xs bg-[var(--virgil-bg-alt)] px-2.5 py-1.5 rounded-button text-[var(--virgil-text)] hover:bg-[var(--virgil-pale)] transition-colors cursor-pointer"
+          className="font-mono text-xs bg-[var(--virgil-bg-alt)] px-2.5 py-1.5 rounded-button text-white hover:bg-gray-800 transition-colors cursor-pointer"
           title={expanded ? "Click to collapse" : "Click to expand"}
         >
           {expanded ? hash : truncateHash(hash)}
