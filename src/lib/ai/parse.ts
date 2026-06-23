@@ -18,7 +18,7 @@ export async function parseInstruction(
   instruction: string
 ): Promise<ParsedInstruction> {
   const apiKey = process.env.GROQ_API_KEY;
-  const model = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+  const model = "llama-3.3-70b-versatile";
 
   if (!apiKey) {
     throw new Error("GROQ_API_KEY is not configured");
