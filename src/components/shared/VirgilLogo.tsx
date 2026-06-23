@@ -11,7 +11,7 @@ interface VirgilLogoProps {
 }
 
 /**
- * Virgil Logo — Three staggered right-pointing chevrons (»»)
+ * Virgil Logo - Three staggered right-pointing chevrons (»»)
  * Dark navy → medium purple → bright blue-violet gradient.
  * Built entirely in code, optionally animated.
  *

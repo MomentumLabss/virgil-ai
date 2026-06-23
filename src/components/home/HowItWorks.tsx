@@ -9,7 +9,7 @@ const steps = [
     step: "01",
     title: "You instruct",
     description:
-      "Tell Virgil what to watch in plain English. No coding, no queries — just describe what you want to monitor.",
+      "Tell Virgil what to watch in plain English. No coding, no queries - just describe what you want to monitor.",
     example: '"Alert me if wallet 0x1234... moves more than 5 ETH"',
     color: "#7c5cfc",
   },
@@ -18,7 +18,7 @@ const steps = [
     step: "02",
     title: "Virgil monitors",
     description:
-      "Our Groq-powered AI agent continuously checks Web3 conditions on your behalf — wallets, prices, contracts, and more.",
+      "Our Groq-powered AI agent continuously checks Web3 conditions on your behalf - wallets, prices, contracts, and more.",
     pulse: true,
     color: "#00d4aa",
   },
@@ -141,7 +141,7 @@ export function HowItWorks() {
                       <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--virgil-success)]" />
                     </span>
                     <span className="text-xs font-semibold text-[var(--virgil-success)]">
-                      Powered by Groq — Live monitoring
+                      Powered by Groq - Live monitoring
                     </span>
                   </div>
                 )}

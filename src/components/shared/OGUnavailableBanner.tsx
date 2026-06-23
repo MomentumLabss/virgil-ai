@@ -61,7 +61,7 @@ export function OGUnavailableBanner() {
               <p className="text-xs sm:text-sm text-amber-800">
                 <span className="font-medium">0G Storage is currently unreachable.</span>{" "}
                 Agent records cannot be saved or verified until connectivity is
-                restored. This is not a Virgil server issue — it is 0G&apos;s
+                restored. This is not a Virgil server issue - it is 0G&apos;s
                 decentralized network.
               </p>
             </div>

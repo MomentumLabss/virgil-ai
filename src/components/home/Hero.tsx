@@ -131,7 +131,7 @@ export function Hero() {
               { icon: Lock, text: "Permanent on 0G" },
               { icon: FileCheck, text: "Cryptographic Proof" },
               { icon: Shield, text: "No Trust Required" },
-              { icon: Zap, text: "Groq AI — Sub-100ms" },
+              { icon: Zap, text: "Groq AI - Sub-100ms" },
               { icon: Database, text: "0G Testnet" },
             ].map(({ icon: Icon, text }) => (
               <div

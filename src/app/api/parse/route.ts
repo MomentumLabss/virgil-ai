@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     
     if (message.includes("JSON") || message.includes("parse")) {
       return NextResponse.json(
-        { error: "Could not parse instruction — please try rephrasing" },
+        { error: "Could not parse instruction - please try rephrasing" },
         { status: 400 }
       );
     }

@@ -18,7 +18,7 @@ export function Footer() {
           <div className="flex items-center gap-2.5">
             <VirgilLogo size={24} animated={false} />
             <span className="font-bold text-[var(--virgil-text)]">Virgil</span>
-            <span className="text-[var(--virgil-text-muted)] text-sm">— Verifiable AI Agent Executor</span>
+            <span className="text-[var(--virgil-text-muted)] text-sm">- Verifiable AI Agent Executor</span>
           </div>
 
           {/* Links */}
@@ -58,7 +58,7 @@ export function Footer() {
           className="mt-8 pt-6 border-t text-center text-xs text-[var(--virgil-text-muted)]"
           style={{ borderColor: "rgba(124, 92, 252, 0.08)" }}
         >
-          Built on 0G — The Decentralized AI Infrastructure · MIT License
+          Built on 0G - The Decentralized AI Infrastructure · MIT License
         </div>
       </div>
     </footer>

@@ -31,7 +31,7 @@ export function formatRelativeTime(ts: number): string {
 }
 
 export function formatNumber(n: number, decimals = 2): string {
-  if (n === null || n === undefined) return "—";
+  if (n === null || n === undefined) return "-";
   return n.toLocaleString("en-US", {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,

@@ -8,7 +8,7 @@ const features = [
     icon: ShieldCheck,
     title: "Trustless",
     description:
-      "Your audit trail lives on 0G decentralized storage — not our servers. No company controls your data.",
+      "Your audit trail lives on 0G decentralized storage - not our servers. No company controls your data.",
     accent: "#7c5cfc",
   },
   {
@@ -29,7 +29,7 @@ const features = [
     icon: Zap,
     title: "Lightning Fast",
     description:
-      "Powered by Groq's LPU inference engine — AI decisions in under 100ms for real-time Web3 monitoring.",
+      "Powered by Groq's LPU inference engine - AI decisions in under 100ms for real-time Web3 monitoring.",
     accent: "#f0b429",
   },
   {
@@ -43,7 +43,7 @@ const features = [
     icon: Lock,
     title: "Wallet-Native",
     description:
-      "Connect with any EVM wallet. No email, no password — your wallet is your identity and your key.",
+      "Connect with any EVM wallet. No email, no password - your wallet is your identity and your key.",
     accent: "#4dd0e1",
   },
 ];
@@ -132,7 +132,7 @@ export function WhyVirgil() {
             <span className="text-[var(--virgil-accent)] font-semibold">
               Zero Cup 2026
             </span>{" "}
-            — 0G Global Vibe Coding Tournament
+            - 0G Global Vibe Coding Tournament
           </p>
         </motion.div>
       </div>

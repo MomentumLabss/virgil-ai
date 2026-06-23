@@ -17,12 +17,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Virgil — Your AI Agent Acts. 0G Remembers. You Have Proof.",
+  title: "Virgil - Your AI Agent Acts. 0G Remembers. You Have Proof.",
   description:
-    "Set conditions in plain English. Virgil monitors Web3, takes action, and writes every decision permanently to 0G — where no one can alter or delete it.",
-  icons: {
-    icon: "/favicon.ico",
-  },
+    "Set conditions in plain English. Virgil monitors Web3, takes action, and writes every decision permanently to 0G - where no one can alter or delete it.",
 };
 
 export default function RootLayout({
