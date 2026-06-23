@@ -22,7 +22,7 @@ export async function evaluateCondition(
   realTimeData: Record<string, unknown>
 ): Promise<EvaluationResult> {
   const apiKey = process.env.GROQ_API_KEY;
-  const model = process.env.GROQ_MODEL || "llama3-70b-8192";
+  const model = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
   if (!apiKey) {
     throw new Error("GROQ_API_KEY is not configured");

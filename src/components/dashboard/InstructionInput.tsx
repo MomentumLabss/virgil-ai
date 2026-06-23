@@ -147,7 +147,7 @@ export function InstructionInput({
           placeholder="e.g. 'Alert me if wallet 0x... moves more than 5 ETH'"
           disabled={state === "parsing" || state === "saving"}
           rows={3}
-          className="w-full px-4 py-3 rounded-button border border-[var(--virgil-border-soft)] bg-white text-[var(--virgil-text)] placeholder:text-[var(--virgil-text-muted)] focus:border-[var(--virgil-accent)] focus:ring-1 focus:ring-[var(--virgil-accent)] outline-none resize-none disabled:opacity-50 transition-all text-sm"
+          className="w-full px-4 py-3 rounded-button border border-[var(--virgil-border-soft)] bg-black/50 text-white placeholder:text-gray-400 focus:border-[var(--virgil-accent)] focus:ring-1 focus:ring-[var(--virgil-accent)] outline-none resize-none disabled:opacity-50 transition-all text-sm"
           maxLength={500}
         />
         <div className="absolute bottom-2 right-2 text-xs text-[var(--virgil-text-muted)]">

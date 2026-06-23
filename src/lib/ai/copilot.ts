@@ -23,7 +23,7 @@ export async function* streamCopilotResponse(
   recentRecords: AgentRecord[]
 ): AsyncGenerator<string, void, unknown> {
   const apiKey = process.env.GROQ_API_KEY;
-  const model = process.env.GROQ_MODEL || "llama3-70b-8192";
+  const model = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
   if (!apiKey) {
     yield "I'm sorry, but the AI copilot is not configured. Please set GROQ_API_KEY in your environment.";
@@ -55,7 +55,8 @@ export async function* streamCopilotResponse(
     });
 
     if (!response.ok) {
-      throw new Error(`Groq API error: ${response.statusText}`);
+      const errorText = await response.text().catch(() => "");
+      throw new Error(`Groq API error: ${response.statusText}. ${errorText}`);
     }
 
     if (!response.body) {
