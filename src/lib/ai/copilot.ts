@@ -47,7 +47,8 @@ const TOOLS = [
         type: "object",
         properties: {
           address: { type: "string", description: "The Ethereum wallet address (0x...)" },
-          limit: { type: "number", description: "Number of transactions to fetch (default 10)" }
+          limit: { type: "number", description: "Number of transactions to fetch (default 10)" },
+          order: { type: "string", enum: ["desc", "asc"], description: "Sort order by block number. Use 'asc' to find the oldest/first transactions (e.g. to determine wallet age), and 'desc' for the newest." }
         },
         required: ["address"]
       }
@@ -130,7 +131,7 @@ export async function* streamCopilotResponse(
         } else if (toolCall.function.name === "getTransactions") {
           try {
             const args = JSON.parse(toolCall.function.arguments);
-            const txs = await getTransactions(args.address, args.limit || 5);
+            const txs = await getTransactions(args.address, args.limit || 5, args.order || "desc");
             formattedMessages.push({
               tool_call_id: toolCall.id,
               role: "tool",

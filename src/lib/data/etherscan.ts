@@ -43,7 +43,8 @@ export async function getETHBalance(address: string): Promise<string> {
 
 export async function getTransactions(
   address: string,
-  limit = 10
+  limit = 10,
+  order: "asc" | "desc" = "desc"
 ): Promise<unknown[]> {
   let allTxs: unknown[] = [];
 
@@ -56,7 +57,7 @@ export async function getTransactions(
           cache: "no-store",
           body: JSON.stringify({
             jsonrpc: "2.0", id: 1, method: "alchemy_getAssetTransfers",
-            params: [{ fromBlock: "0x0", toBlock: "latest", toAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0xa", order: "desc" }]
+            params: [{ fromBlock: "0x0", toBlock: "latest", toAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0x64", order }]
           })
         }),
         fetch(url, {
@@ -65,7 +66,7 @@ export async function getTransactions(
           cache: "no-store",
           body: JSON.stringify({
             jsonrpc: "2.0", id: 2, method: "alchemy_getAssetTransfers",
-            params: [{ fromBlock: "0x0", toBlock: "latest", fromAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0xa", order: "desc" }]
+            params: [{ fromBlock: "0x0", toBlock: "latest", fromAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0x64", order }]
           })
         })
       ]);
@@ -80,8 +81,13 @@ export async function getTransactions(
     }
   }
 
-  // Sort by blockNum descending
-  allTxs.sort((a: any, b: any) => Number(b.blockNum || 0) - Number(a.blockNum || 0));
+  // Sort by blockNum
+  allTxs.sort((a: any, b: any) => {
+    if (order === "asc") {
+      return Number(a.blockNum || 0) - Number(b.blockNum || 0);
+    }
+    return Number(b.blockNum || 0) - Number(a.blockNum || 0);
+  });
   
   // Format the output to be cleaner and ensure the timestamp is obvious
   const formattedTxs = allTxs.slice(0, limit).map((tx: any) => ({
