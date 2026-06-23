@@ -1,4 +1,4 @@
-const ETHERSCAN_API_URL = "https://api.etherscan.io/api";
+const ETHERSCAN_API_URL = "https://api.etherscan.io/v2/api";
 
 function getApiKey(): string {
   const key = process.env.ETHERSCAN_API_KEY;
@@ -10,13 +10,13 @@ function getApiKey(): string {
 
 export async function getETHBalance(address: string): Promise<string> {
   const key = getApiKey();
-  const url = `${ETHERSCAN_API_URL}?module=account&action=balance&address=${address}&tag=latest&apikey=${key}`;
+  const url = `${ETHERSCAN_API_URL}?chainid=1&module=account&action=balance&address=${address}&tag=latest&apikey=${key}`;
 
   const res = await fetch(url);
-  const data = (await res.json()) as { result: string; status: string };
+  const data = (await res.json()) as { result: string; status: string; message: string };
 
   if (data.status !== "1") {
-    throw new Error(`Etherscan error: ${data.result}`);
+    throw new Error(`Etherscan error: ${data.message} - ${data.result}`);
   }
 
   return data.result;
@@ -27,10 +27,10 @@ export async function getTransactions(
   limit = 10
 ): Promise<unknown[]> {
   const key = getApiKey();
-  const url = `${ETHERSCAN_API_URL}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${key}`;
+  const url = `${ETHERSCAN_API_URL}?chainid=1&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${key}`;
 
   const res = await fetch(url);
-  const data = (await res.json()) as { result: unknown[] | string; status: string };
+  const data = (await res.json()) as { result: unknown[] | string; status: string; message: string };
 
   if (data.status !== "1") {
     return [];
@@ -45,13 +45,13 @@ export async function getTokenTransfers(
   limit = 10
 ): Promise<unknown[]> {
   const key = getApiKey();
-  let url = `${ETHERSCAN_API_URL}?module=account&action=tokentx&address=${address}&sort=desc&apikey=${key}`;
+  let url = `${ETHERSCAN_API_URL}?chainid=1&module=account&action=tokentx&address=${address}&sort=desc&apikey=${key}`;
   if (contractAddress) {
     url += `&contractaddress=${contractAddress}`;
   }
 
   const res = await fetch(url);
-  const data = (await res.json()) as { result: unknown[] | string; status: string };
+  const data = (await res.json()) as { result: unknown[] | string; status: string; message: string };
 
   if (data.status !== "1") {
     return [];
