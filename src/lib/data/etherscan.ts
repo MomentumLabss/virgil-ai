@@ -56,7 +56,7 @@ export async function getTransactions(
           cache: "no-store",
           body: JSON.stringify({
             jsonrpc: "2.0", id: 1, method: "alchemy_getAssetTransfers",
-            params: [{ fromBlock: "0x0", toBlock: "latest", toAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0xa" }]
+            params: [{ fromBlock: "0x0", toBlock: "latest", toAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0xa", order: "desc" }]
           })
         }),
         fetch(url, {
@@ -65,7 +65,7 @@ export async function getTransactions(
           cache: "no-store",
           body: JSON.stringify({
             jsonrpc: "2.0", id: 2, method: "alchemy_getAssetTransfers",
-            params: [{ fromBlock: "0x0", toBlock: "latest", fromAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0xa" }]
+            params: [{ fromBlock: "0x0", toBlock: "latest", fromAddress: address, category: ["external", "erc20"], withMetadata: true, maxCount: "0xa", order: "desc" }]
           })
         })
       ]);
@@ -100,7 +100,8 @@ export async function getTokenTransfers(
         toAddress: address,
         category: ["erc20"],
         withMetadata: true,
-        maxCount: "0xa"
+        maxCount: "0xa",
+        order: "desc"
       };
       if (contractAddress) {
         params.contractAddresses = [contractAddress];
