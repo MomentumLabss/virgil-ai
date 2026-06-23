@@ -12,11 +12,14 @@ Live: [virgil-ai-one.vercel.app](https://virgil-ai-one.vercel.app)
 
 I built Virgil because I got tired of manually watching wallets, refreshing price charts, and reacting too late to on-chain events. The idea is simple: tell Virgil what to watch in plain English, and it handles the rest. Every decision the agent makes gets written permanently to [0G](https://0g.ai) decentralized storage so there is a cryptographically verifiable audit trail - no company server, no middleman.
 
-Some examples of instructions that work right now:
+Virgil currently supports three types of continuous monitoring:
 
-- *"Alert me if wallet 0x... moves more than 5 ETH"*
-- *"Alert me if ETH price drops below $2000"*
-- *"Watch wallet 0x... and notify me of any transaction"*
+1. **Wallet Movement:** Watch any wallet across 5 chains (ETH, Arb, Opt, Base, Polygon) for new transactions.
+   - *"Watch wallet 0x... and notify me of any transaction"*
+2. **Token Transfers:** Monitor specific ERC20 token movements.
+   - *"Alert me if wallet 0x... receives USDT"*
+3. **Price Thresholds:** Monitor live asset prices.
+   - *"Alert me if ETH price drops below $2000"*
 
 The AI understands plain English. You do not need to write queries or code anything.
 
@@ -43,7 +46,8 @@ Because Virgil logs every evaluation to the **0G Decentralized Storage Network**
 - **Framework**: Next.js 15 (App Router) + TypeScript
 - **Wallet**: RainbowKit + Wagmi v2
 - **AI**: Groq LPU (llama-3.3-70b-versatile) for near-instant instruction parsing and Copilot chat
-- **Blockchain Data**: Etherscan API (Modularized for easy Alchemy/Moralis drop-in) + CoinGecko
+- **Blockchain Data**: Alchemy SDK for robust, multi-chain transaction indexing (Ethereum, Arbitrum, Optimism, Base, Polygon).
+- **Price Data**: Binance REST API for real-time asset pricing.
 - **Storage**: 0G Decentralized Storage via @0gfoundation/0g-storage-ts-sdk
 
 ---
