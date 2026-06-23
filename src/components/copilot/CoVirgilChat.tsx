@@ -157,13 +157,13 @@ export function CoVirgilChat() {
   if (!address) {
     return (
       <div className="h-full flex items-center justify-center p-6 text-center">
-        <p className="text-gray-500">Please connect your wallet to chat with CoVirgil.</p>
+        <p className="text-gray-400">Please connect your wallet to chat with CoVirgil.</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-transparent">
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {messages.length === 0 ? (
@@ -172,15 +172,15 @@ export function CoVirgilChat() {
               <Bot className="w-8 h-8 text-[var(--virgil-accent)]" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to CoVirgil</h2>
-              <p className="text-gray-500">Powered by Llama 3.3. I can analyze your agent activity, wallet balances, and Web3 data.</p>
+              <h2 className="text-2xl font-bold text-gray-100 mb-2">Welcome to CoVirgil</h2>
+              <p className="text-gray-400">Powered by Llama 3.3. I can analyze your agent activity, wallet balances, and Web3 data.</p>
             </div>
             <div className="flex flex-wrap justify-center gap-3">
               {COPILOT_SUGGESTIONS.map((s) => (
                 <button
                   key={s}
                   onClick={() => handleSuggestion(s)}
-                  className="px-4 py-2.5 rounded-full bg-white border border-[var(--virgil-border-soft)] text-sm text-gray-700 hover:border-[var(--virgil-accent)] hover:text-[var(--virgil-accent)] transition-all shadow-sm"
+                  className="px-4 py-2.5 rounded-full bg-[var(--virgil-bg-alt)] border border-[var(--virgil-border-soft)] text-sm text-gray-300 hover:border-[var(--virgil-accent)] hover:text-[var(--virgil-accent)] hover:bg-[var(--virgil-bg)] transition-all shadow-sm"
                 >
                   {s}
                 </button>
@@ -213,7 +213,7 @@ export function CoVirgilChat() {
                   className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-sm leading-relaxed ${
                     msg.role === "user"
                       ? "bg-[var(--virgil-accent)] text-white rounded-br-md"
-                      : "bg-white text-gray-800 rounded-bl-md border border-[var(--virgil-border-soft)] shadow-sm"
+                      : "bg-[var(--virgil-bg-alt)] text-gray-200 rounded-bl-md border border-[var(--virgil-border-soft)] shadow-sm"
                   }`}
                 >
                   {msg.content || <span className="italic opacity-50">...</span>}
@@ -227,7 +227,7 @@ export function CoVirgilChat() {
                 <div className="w-8 h-8 rounded-full bg-[var(--virgil-bg-alt)] border border-[var(--virgil-border-soft)] flex items-center justify-center shrink-0">
                   <Bot className="w-4 h-4 text-[var(--virgil-accent)]" />
                 </div>
-                <div className="bg-white rounded-2xl rounded-bl-md border border-[var(--virgil-border-soft)] shadow-sm overflow-hidden">
+                <div className="bg-[var(--virgil-bg-alt)] rounded-2xl rounded-bl-md border border-[var(--virgil-border-soft)] shadow-sm overflow-hidden">
                   <FetchingIndicator />
                 </div>
               </div>
@@ -239,7 +239,7 @@ export function CoVirgilChat() {
                 <div className="w-8 h-8 rounded-full bg-[var(--virgil-bg-alt)] border border-[var(--virgil-border-soft)] flex items-center justify-center shrink-0">
                   <Bot className="w-4 h-4 text-[var(--virgil-accent)]" />
                 </div>
-                <div className="bg-white rounded-2xl rounded-bl-md px-5 py-4 border border-[var(--virgil-border-soft)] shadow-sm">
+                <div className="bg-[var(--virgil-bg-alt)] rounded-2xl rounded-bl-md px-5 py-4 border border-[var(--virgil-border-soft)] shadow-sm">
                   <div className="flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-[var(--virgil-text-muted)] animate-bounce-dot" style={{ animationDelay: "0ms" }} />
                     <span className="w-2 h-2 rounded-full bg-[var(--virgil-text-muted)] animate-bounce-dot" style={{ animationDelay: "160ms" }} />
@@ -255,7 +255,7 @@ export function CoVirgilChat() {
       </div>
 
       {/* Input Area */}
-      <div className="p-6 bg-white">
+      <div className="p-6 bg-transparent">
         <div className="max-w-4xl mx-auto">
           <form
             onSubmit={handleSubmit}
@@ -268,7 +268,7 @@ export function CoVirgilChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask CoVirgil to analyze something..."
-                className="w-full px-5 py-4 rounded-xl border border-[var(--virgil-border-soft)] bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:border-[var(--virgil-accent)] focus:bg-white outline-none shadow-sm transition-all"
+                className="w-full px-5 py-4 rounded-xl border border-[var(--virgil-border-soft)] bg-[var(--virgil-bg-alt)] text-gray-100 placeholder:text-gray-500 focus:border-[var(--virgil-accent)] focus:bg-[var(--virgil-bg)] outline-none shadow-sm transition-all"
               />
             </div>
             <button
