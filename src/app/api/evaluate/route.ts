@@ -138,8 +138,10 @@ export async function POST(req: NextRequest) {
     // Update instruction last checked
     instruction.lastCheckedAt = timestamp;
     if (evaluation.outcome === "triggered") {
-      instruction.status = "triggered";
-      instruction.triggeredAt = timestamp;
+      // Keep status as "active" so it continues to be evaluated in future loops
+      // Just record the trigger time
+      instruction.lastTriggeredAt = timestamp;
+      instruction.triggeredAt = timestamp; // Keep for legacy compatibility
     }
     await writeToOG(instruction.ogStorageKey, instruction);
 

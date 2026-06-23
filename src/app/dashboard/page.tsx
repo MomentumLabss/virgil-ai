@@ -49,10 +49,14 @@ export default function DashboardPage() {
     };
   }, [isConnected, address, router]);
 
-  // Fetch instructions
   const fetchInstructions = useCallback(async () => {
     if (!address) return;
-    setIsLoadingInstructions(true);
+    
+    // Only show loading state on initial load, not background polls
+    if (instructions.length === 0) {
+      setIsLoadingInstructions(true);
+    }
+    
     try {
       const res = await fetch(`/api/instructions?wallet=${address}`);
       let fetchedInstructions: Instruction[] = [];

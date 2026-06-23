@@ -29,6 +29,7 @@ export interface Instruction {
   createdAt: number;
   lastCheckedAt: number | null;
   triggeredAt: number | null;
+  lastTriggeredAt?: number | null; // Added for continuous monitoring
   ogStorageKey: string;
   ogTxHash: string | null;
 }

@@ -22,7 +22,7 @@ export function InstructionList({
           Your Instructions
         </h2>
         <span className="text-xs text-gray-500">
-          {instructions.length} active
+          {instructions.length} total
         </span>
       </div>
 
