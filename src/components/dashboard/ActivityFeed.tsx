@@ -8,6 +8,8 @@ interface ActivityFeedProps {
   records: AgentRecord[];
   isLoading: boolean;
   isAgentRunning: boolean;
+}
+
 export function ActivityFeed({ records, isLoading, isAgentRunning }: ActivityFeedProps) {
   // Show only triggered records on the main dashboard
   const displayRecords = records.filter(r => r.outcome === "triggered");

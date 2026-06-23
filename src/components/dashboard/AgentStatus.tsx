@@ -47,7 +47,7 @@ export function AgentStatusPanel({
           value: `${totalRecords}`,
           color: "text-gray-900",
         },
-      ].map((item) => (
+      ].map((item) => {
         const isClickable = item.label === "Total Records";
         
         const CardContent = (
