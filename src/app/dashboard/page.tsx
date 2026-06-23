@@ -72,12 +72,12 @@ export default function DashboardPage() {
     }
   }, [address]);
 
-  // Fetch records (simulated by checking instruction records)
+  // Fetch records
   const fetchRecords = useCallback(async () => {
     if (!address) return;
     setIsLoadingRecords(true);
     try {
-      // In a full implementation, we'd have a dedicated records endpoint
+      // TODO: implement dedicated records endpoint instead of extracting from instructions
       // For now, we'll use the instructions we already have
       const allRecords: AgentRecord[] = [];
       setRecords(allRecords);
