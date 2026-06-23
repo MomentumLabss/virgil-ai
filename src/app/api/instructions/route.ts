@@ -3,8 +3,6 @@ import { writeToOG, readFromOG, listKeysFromOG } from "@/lib/0g/storage";
 import { Instruction, ParsedInstruction } from "@/types";
 import { randomUUID } from "crypto";
 
-import { evaluateInstruction } from "@/lib/ai/evaluate";
-
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as {
@@ -38,9 +36,17 @@ export async function POST(req: NextRequest) {
     // Re-write with the tx hash
     await writeToOG(instruction.ogStorageKey, instruction);
     
-    // Trigger an immediate initial evaluation
+    // Trigger an immediate initial evaluation asynchronously
     try {
-      await evaluateInstruction(instruction);
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      fetch(`${baseUrl}/api/evaluate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          instructionId: id,
+          walletAddress: body.walletAddress,
+        }),
+      }).catch((e) => console.error("Background evaluation failed", e));
     } catch (evalError) {
       console.error("Initial evaluation failed:", evalError);
     }

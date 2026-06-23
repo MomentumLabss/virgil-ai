@@ -29,7 +29,7 @@ export function CoVirgilChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [instructions, setInstructions] = useState<Instruction[]>([]);
-  const [records, setRecords] = useState<AgentRecord[]>([]);
+  const [records] = useState<AgentRecord[]>([]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
