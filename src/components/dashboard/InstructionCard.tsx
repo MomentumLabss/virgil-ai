@@ -33,6 +33,15 @@ export function InstructionCard({ instruction, onUpdate }: InstructionCardProps)
         throw new Error(err.error || "Evaluation failed");
       }
 
+      const data = await res.json() as { record?: any };
+      
+      if (data.record && instruction.walletAddress) {
+        const localKey = `virgil_records_${instruction.walletAddress}`;
+        const existing = localStorage.getItem(localKey);
+        const records = existing ? JSON.parse(existing) : [];
+        localStorage.setItem(localKey, JSON.stringify([data.record, ...records]));
+      }
+
       showToast("Agent checked the condition!", "success");
       onUpdate();
     } catch {
