@@ -56,7 +56,7 @@ export async function getTransactions(
     if (data.status !== "1" || !Array.isArray(data.result)) return [];
     
     // Add chainId context to each transaction
-    return data.result.map(tx => ({ ...tx, chainId }));
+    return data.result.map((tx: any) => ({ ...tx, chainId }));
   });
 
   const results = await Promise.allSettled(promises);
@@ -90,7 +90,7 @@ export async function getTokenTransfers(
     const data = (await res.json()) as { result: unknown[] | string; status: string; message: string };
     if (data.status !== "1" || !Array.isArray(data.result)) return [];
     
-    return data.result.map(tx => ({ ...tx, chainId }));
+    return data.result.map((tx: any) => ({ ...tx, chainId }));
   });
 
   const results = await Promise.allSettled(promises);
