@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFromOG, writeToOG } from "@/lib/0g/storage";
+import { writeToOG } from "@/lib/0g/storage";
 import { evaluateCondition } from "@/lib/ai/evaluate";
 import { computeRecordHash } from "@/lib/crypto/hash";
 import { getETHBalance, getTransactions, getTokenTransfers } from "@/lib/data/etherscan";
