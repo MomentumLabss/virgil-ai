@@ -2,7 +2,11 @@ import { ParsedInstruction } from "@/types";
 
 const SYSTEM_PROMPT = `You are Virgil's instruction parser. Your job is to extract structured parameters from a plain English monitoring instruction.
 
-The user wants to monitor Web3 conditions. Extract:
+Virgil is a CONTINUOUS MONITORING AGENT, NOT an immediate query bot.
+If the user asks a direct question or for an immediate action (e.g., "fetch my balance now", "what is this wallet doing?", "analyze this wallet"), you MUST set \`isQuestion: true\`.
+If the user provides an ongoing condition to watch (e.g., "watch this wallet", "alert me if..."), set \`isQuestion: false\`.
+
+Extract:
 - conditionType: one of wallet_movement | price_threshold | dao_event | contract_interaction | token_received
 - target: the wallet address, token name, or asset being monitored
 - threshold: numeric threshold if applicable (null if none)
@@ -11,6 +15,7 @@ The user wants to monitor Web3 conditions. Extract:
 - confidence: 0-100 integer, how confident you are in the parse
 - needsClarification: boolean
 - clarificationQuestion: if needsClarification is true, one specific question to ask the user
+- isQuestion: boolean (true if it's an immediate query or chat message rather than an ongoing monitoring instruction)
 
 Respond ONLY with a valid JSON object. No markdown, no explanation. Just the JSON.`;
 
@@ -69,5 +74,6 @@ export async function parseInstruction(
     confidence: typeof parsed.confidence === "number" ? parsed.confidence : 50,
     needsClarification: !!parsed.needsClarification,
     clarificationQuestion: parsed.clarificationQuestion ?? null,
+    isQuestion: !!parsed.isQuestion,
   };
 }

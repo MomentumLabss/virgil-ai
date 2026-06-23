@@ -15,7 +15,6 @@ import { InstructionList } from "@/components/dashboard/InstructionList";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { OGUnavailableBanner } from "@/components/shared/OGUnavailableBanner";
 import { AgentStatusPanel } from "@/components/dashboard/AgentStatus";
-import { Copilot } from "@/components/copilot/Copilot";
 
 export default function DashboardPage() {
   const { address, isConnected } = useAccount();
@@ -264,12 +263,6 @@ export default function DashboardPage() {
       <Footer />
       <ToastContainer />
 
-      {/* AI Copilot */}
-      <Copilot
-        walletAddress={address || ""}
-        instructions={instructions}
-        recentRecords={records}
-      />
     </main>
   );
 }

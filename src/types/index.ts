@@ -18,6 +18,7 @@ export interface ParsedInstruction {
   confidence: number;
   needsClarification: boolean;
   clarificationQuestion: string | null;
+  isQuestion: boolean;
 }
 
 export interface Instruction {

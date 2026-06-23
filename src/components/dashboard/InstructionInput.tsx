@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Send, AlertCircle, CheckCircle } from "lucide-react";
+import { Sparkles, Send, AlertCircle, CheckCircle, Bot, MessageCircle } from "lucide-react";
+import Link from "next/link";
 import { INSTRUCTION_EXAMPLES } from "@/lib/utils/constants";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { showToast } from "@/components/shared/Toast";
@@ -23,7 +24,7 @@ interface InstructionInputProps {
   onInstructionCreated: () => void;
 }
 
-type InputState = "idle" | "parsing" | "clarifying" | "confirming" | "saving";
+type InputState = "idle" | "parsing" | "clarifying" | "confirming" | "saving" | "question";
 
 export function InstructionInput({
   walletAddress,
@@ -54,7 +55,9 @@ export function InstructionInput({
       const data = (await res.json()) as { parsed: ParsedResult };
       setParsed(data.parsed);
 
-      if (data.parsed.needsClarification) {
+      if (data.parsed.isQuestion) {
+        setState("question");
+      } else if (data.parsed.needsClarification) {
         setState("clarifying");
       } else {
         setState("confirming");
@@ -253,6 +256,45 @@ export function InstructionInput({
             >
               Cancel
             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Question UI */}
+      <AnimatePresence>
+        {state === "question" && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-[var(--virgil-glow)]/50 border border-[var(--virgil-pale)] rounded-lg p-4 space-y-3"
+          >
+            <div className="flex items-start gap-2">
+              <Bot className="w-4 h-4 text-[var(--virgil-accent)] mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  Are you asking a question?
+                </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  It looks like you're trying to perform a one-time analysis or ask a question. I am an automated monitoring agent designed to watch for <i>future</i> events. For direct analysis, please chat with CoVirgil!
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 pt-1">
+              <Link
+                href="/covirgil"
+                className="px-4 py-2 rounded-button bg-[var(--virgil-accent)] text-white text-sm font-medium hover:bg-[var(--virgil-accent-warm)] active:scale-[0.98] transition-all flex items-center gap-2"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Go to CoVirgil
+              </Link>
+              <button
+                onClick={handleReset}
+                className="px-4 py-2 rounded-button border border-[var(--virgil-border-soft)] text-sm text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

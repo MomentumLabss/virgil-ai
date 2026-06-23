@@ -4,17 +4,21 @@ function buildSystemPrompt(
   instructions: Instruction[],
   recentRecords: AgentRecord[]
 ): string {
-  return `You are Virgil, an AI agent assistant. You help users understand what their Web3 monitoring agent has been doing.
+  const instructionsContext = instructions.length > 0 
+    ? `\n\nCurrent user context (active instructions):\n${JSON.stringify(instructions, null, 2)}`
+    : "";
 
-You have access to the user's current instructions and recent agent records. Always reference specific data when answering. Be concise and direct. Never make up data - only reference what is provided in the context.
+  const recordsContext = recentRecords.length > 0
+    ? `\n\nRecent agent records:\n${JSON.stringify(recentRecords, null, 2)}`
+    : "";
 
-If asked about a specific record, reference its ID and timestamp. If asked what the agent has been doing, summarize from the records provided.
+  return `You are CoVirgil, an AI Web3 assistant built into the Virgil platform. 
+You help users understand their Web3 monitoring agent activity, but you can also answer general Web3, crypto, and wallet analysis questions.
 
-Current user context (active instructions):
-${JSON.stringify(instructions, null, 2)}
-
-Recent agent records:
-${JSON.stringify(recentRecords, null, 2)}`;
+If the user asks about their monitoring instructions or agent records, reference the context below. 
+If the context is empty, politely explain that they haven't set up any active monitoring instructions yet.
+If the user asks a general question (like fetching a balance, explaining a transaction, or analyzing a wallet), answer it normally as an AI assistant.
+DO NOT leak raw JSON arrays to the user. Always format your responses in clean, readable text.${instructionsContext}${recordsContext}`;
 }
 
 export async function* streamCopilotResponse(

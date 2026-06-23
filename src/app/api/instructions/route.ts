@@ -3,6 +3,8 @@ import { writeToOG, readFromOG, listKeysFromOG } from "@/lib/0g/storage";
 import { Instruction, ParsedInstruction } from "@/types";
 import { randomUUID } from "crypto";
 
+import { evaluateInstruction } from "@/lib/agent/evaluate";
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as {
@@ -35,6 +37,13 @@ export async function POST(req: NextRequest) {
 
     // Re-write with the tx hash
     await writeToOG(instruction.ogStorageKey, instruction);
+    
+    // Trigger an immediate initial evaluation
+    try {
+      await evaluateInstruction(instruction);
+    } catch (evalError) {
+      console.error("Initial evaluation failed:", evalError);
+    }
 
     return NextResponse.json({ instruction });
   } catch (error) {

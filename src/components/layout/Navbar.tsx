@@ -26,12 +26,20 @@ export function Navbar() {
           {/* Right side */}
           <div className="flex items-center gap-3">
             {isConnected && (
-              <Link
-                href="/dashboard"
-                className="hidden sm:inline-flex text-sm font-medium text-[var(--virgil-text-secondary)] hover:text-[var(--virgil-accent)] transition-colors px-3 py-2 rounded-lg hover:bg-[var(--virgil-glow)]"
-              >
-                Dashboard
-              </Link>
+              <>
+                <Link
+                  href="/covirgil"
+                  className="hidden sm:inline-flex text-sm font-medium text-[var(--virgil-text-secondary)] hover:text-[var(--virgil-accent)] transition-colors px-3 py-2 rounded-lg hover:bg-[var(--virgil-glow)]"
+                >
+                  CoVirgil
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="hidden sm:inline-flex text-sm font-medium text-[var(--virgil-text-secondary)] hover:text-[var(--virgil-accent)] transition-colors px-3 py-2 rounded-lg hover:bg-[var(--virgil-glow)]"
+                >
+                  Dashboard
+                </Link>
+              </>
             )}
             <WalletButton />
           </div>
