@@ -76,7 +76,7 @@ Open http://localhost:3000.
     NEXT_PUBLIC_0G_RPC_URL=https://evmrpc-testnet.0g.ai
     NEXT_PUBLIC_0G_STORAGE_RPC=https://indexer-storage-testnet-turbo.0g.ai
 
-Without the 0G keys the app still runs fully - it stores data in memory for testing. You will see a banner in the dashboard when 0G is unavailable.
+
 
 ---
 
@@ -131,19 +131,13 @@ Without the 0G keys the app still runs fully - it stores data in memory for test
 
 ## Notes
 
-- **0G Testnet**: The 0G testnet can occasionally be unreachable - this is a network-level issue on 0G side, not a bug in Virgil. The app shows a clear warning banner when this happens and continues to function normally.
+
 - **Agent polling**: The agent runs while the dashboard tab is open. A background service for 24/7 monitoring is on the roadmap.
 - **Confidence scores**: When Groq parses an instruction it returns a confidence score. Anything below 70% triggers a clarification prompt before activation.
 
 ---
 
-## What is next
 
-- Telegram bot notifications when agent conditions are triggered
-- Background monitoring service (so the tab does not need to stay open)
-- More condition types: DAO votes, contract events, NFT transfers
-- Activity timeline chart
-- Mobile app
 
 ---
 
