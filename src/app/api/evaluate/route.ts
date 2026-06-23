@@ -120,13 +120,14 @@ export async function POST(req: NextRequest) {
 
     const recordHash = computeRecordHash(recordBase);
 
+    const origin = req.headers.get("origin") || "https://virgil-ai-one.vercel.app";
     const record: AgentRecord = {
       id: recordId,
       ...recordBase,
       recordHash,
       ogStorageKey: `records/${instruction.id}/${timestamp}`,
       ogTxHash: null,
-      verificationUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/verify/${recordId}`,
+      verificationUrl: `${origin}/verify/${recordId}`,
     };
 
     // Write record to 0G

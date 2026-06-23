@@ -41,7 +41,11 @@ export function RecordCard({ record }: RecordCardProps) {
         </div>
         <div className="flex items-center gap-2">
           <Link
-            href={record.verificationUrl}
+            href={
+              record.verificationUrl.includes("localhost:3000") && typeof window !== "undefined" && !window.location.href.includes("localhost")
+                ? record.verificationUrl.replace("http://localhost:3000", window.location.origin)
+                : record.verificationUrl
+            }
             onClick={(e) => e.stopPropagation()}
             className="text-xs text-[var(--virgil-accent)] hover:underline flex items-center gap-1 shrink-0"
           >
