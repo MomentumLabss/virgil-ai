@@ -1,4 +1,4 @@
-﻿# Virgil
+# Virgil
 
 **Your AI Agent Acts. 0G Remembers. You Have Proof.**
 
@@ -19,6 +19,22 @@ Some examples of instructions that work right now:
 - *"Watch wallet 0x... and notify me of any transaction"*
 
 The AI understands plain English. You do not need to write queries or code anything.
+
+---
+
+## Use Cases (User's Perspective)
+
+**1. Whale Watching & Copy Trading**
+Track institutional or "smart money" wallets. Instead of constantly checking Etherscan, tell Virgil: *"Alert me if wallet 0xabc... transfers more than 10 ETH."* You get a permanent, verifiable receipt of exactly when the movement was detected.
+
+**2. Automated DeFi Price Alerts**
+Set custom price targets for your crypto portfolio without relying on centralized exchange notifications. For example: *"Watch ETH and notify me if the price drops below $2000."* 
+
+**3. Cold Storage / Security Monitoring**
+Keep an eye on your own vaults or multi-sig wallets. Set an instruction like: *"Watch wallet 0x123... and alert me of any outgoing transaction."* Virgil acts as an automated security guard for your funds.
+
+**4. Tamper-Proof Audit Trails**
+Because Virgil logs every evaluation to the **0G Decentralized Storage Network**, it creates a public, immutable receipt. If you need cryptographic proof that a specific on-chain event occurred at an exact timestamp, Virgil provides a verifiable link that anyone can audit.
 
 ---
 
@@ -58,7 +74,7 @@ Open http://localhost:3000.
     ETHERSCAN_API_KEY=your_etherscan_key_here
     OG_PRIVATE_KEY=your_0g_wallet_private_key
     NEXT_PUBLIC_0G_RPC_URL=https://evmrpc-testnet.0g.ai
-    NEXT_PUBLIC_0G_STORAGE_RPC=https://indexer-storage-testnet-standard.0g.ai
+    NEXT_PUBLIC_0G_STORAGE_RPC=https://indexer-storage-testnet-turbo.0g.ai
 
 Without the 0G keys the app still runs fully - it stores data in memory for testing. You will see a banner in the dashboard when 0G is unavailable.
 
