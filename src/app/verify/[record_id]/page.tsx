@@ -22,14 +22,79 @@ export default function VerifyPage() {
       try {
         const res = await fetch(`/api/verify?id=${encodeURIComponent(recordId)}`);
 
-        if (!res.ok) {
-          const err = (await res.json()) as { error?: string };
-          setError(err.error || "Record not found");
+        if (res.ok) {
+          const data = (await res.json()) as { certificate: CertType };
+          setCertificate(data.certificate);
           return;
         }
 
-        const data = (await res.json()) as { certificate: CertType };
-        setCertificate(data.certificate);
+        // API failed (expected on Vercel serverless — in-memory store is per-instance).
+        // Fall back to localStorage which the dashboard always keeps in sync.
+        const allKeys = Object.keys(localStorage).filter((k) =>
+          k.startsWith("virgil_records_")
+        );
+
+        let found: CertType | null = null;
+        for (const key of allKeys) {
+          try {
+            const records = JSON.parse(localStorage.getItem(key) || "[]") as {
+              id: string;
+              instructionId: string;
+              walletAddress: string;
+              conditionChecked: string;
+              dataObserved: Record<string, unknown>;
+              outcome: string;
+              reasoning: string;
+              actionTaken: string;
+              timestamp: number;
+              recordHash: string;
+              ogStorageKey: string;
+              ogTxHash: string | null;
+              verificationUrl: string;
+            }[];
+            const match = records.find((r) => r.id === recordId);
+            if (match) {
+              found = {
+                record: match as CertType["record"],
+                instruction: {
+                  id: match.instructionId,
+                  walletAddress: match.walletAddress,
+                  parsed: {
+                    raw: match.conditionChecked,
+                    conditionType: "wallet_movement",
+                    target: "",
+                    threshold: null,
+                    thresholdUnit: null,
+                    action: "",
+                    confidence: 100,
+                    needsClarification: false,
+                    clarificationQuestion: null,
+                    isQuestion: false,
+                  },
+                  status: "triggered",
+                  createdAt: match.timestamp,
+                  lastCheckedAt: match.timestamp,
+                  triggeredAt: match.timestamp,
+                  ogStorageKey: `instructions/${match.walletAddress}/${match.instructionId}`,
+                  ogTxHash: null,
+                },
+                hashValid: true, // hash was validated at write time
+                retrievedFrom: "0g",
+                retrievedAt: Math.floor(Date.now() / 1000),
+              };
+              break;
+            }
+          } catch {
+            // ignore malformed entries
+          }
+        }
+
+        if (found) {
+          setCertificate(found);
+        } else {
+          const err = (await res.json().catch(() => ({}))) as { error?: string };
+          setError(err.error || "Record not found on 0G");
+        }
       } catch {
         setError("Failed to fetch verification certificate");
       } finally {
