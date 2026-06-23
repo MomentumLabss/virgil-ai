@@ -5,22 +5,19 @@ import { Send, Bot, User, Sparkles } from "lucide-react";
 import { useAccount } from "wagmi";
 import { COPILOT_SUGGESTIONS } from "@/lib/utils/constants";
 import { CopilotMessage, Instruction, AgentRecord } from "@/types";
+import { VirgilLogo } from "@/components/shared/VirgilLogo";
 
-function TypingIndicator() {
+function FetchingIndicator() {
   return (
-    <div className="flex items-center gap-1 px-1 py-2">
-      <span
-        className="w-2 h-2 rounded-full bg-[var(--virgil-text-muted)] animate-bounce-dot"
-        style={{ animationDelay: "0ms" }}
-      />
-      <span
-        className="w-2 h-2 rounded-full bg-[var(--virgil-text-muted)] animate-bounce-dot"
-        style={{ animationDelay: "160ms" }}
-      />
-      <span
-        className="w-2 h-2 rounded-full bg-[var(--virgil-text-muted)] animate-bounce-dot"
-        style={{ animationDelay: "320ms" }}
-      />
+    <div className="flex flex-col items-center justify-center p-4 space-y-3">
+      <div className="relative">
+        {/* Glow effect */}
+        <div className="absolute inset-0 bg-[var(--virgil-accent)] blur-xl opacity-20 animate-pulse rounded-full" />
+        <VirgilLogo size={24} animated={true} />
+      </div>
+      <span className="text-xs font-medium text-[var(--virgil-accent)] animate-pulse">
+        Fetching live blockchain data...
+      </span>
     </div>
   );
 }
@@ -30,6 +27,7 @@ export function CoVirgilChat() {
   const [messages, setMessages] = useState<CopilotMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingData, setIsFetchingData] = useState(false);
   const [instructions, setInstructions] = useState<Instruction[]>([]);
   const [records, setRecords] = useState<AgentRecord[]>([]);
   
@@ -56,7 +54,7 @@ export function CoVirgilChat() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+  }, [messages, isLoading, isFetchingData]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -75,6 +73,7 @@ export function CoVirgilChat() {
     setMessages(newMessages);
     setInput("");
     setIsLoading(true);
+    setIsFetchingData(false);
 
     try {
       const res = await fetch("/api/copilot", {
@@ -102,6 +101,16 @@ export function CoVirgilChat() {
 
         const chunk = decoder.decode(value, { stream: true });
         assistantContent += chunk;
+
+        if (assistantContent.includes("__TOOL_FETCHING__")) {
+          setIsFetchingData(true);
+          assistantContent = assistantContent.replace("__TOOL_FETCHING__", "");
+          continue; // Wait for the real content
+        } else if (assistantContent.length > 0 && isFetchingData) {
+          setIsFetchingData(false);
+        }
+
+        if (assistantContent.length === 0) continue;
 
         if (isFirstChunk) {
           isFirstChunk = false;
@@ -132,6 +141,7 @@ export function CoVirgilChat() {
       setMessages([...newMessages, errorMsg]);
     } finally {
       setIsLoading(false);
+      setIsFetchingData(false);
     }
   };
 
@@ -210,16 +220,35 @@ export function CoVirgilChat() {
                 </div>
               </div>
             ))}
-            {isLoading && messages[messages.length - 1]?.role === "user" && (
+            
+            {/* Custom Fetching Indicator */}
+            {isFetchingData && (
               <div className="flex gap-4 max-w-4xl mx-auto">
                 <div className="w-8 h-8 rounded-full bg-[var(--virgil-bg-alt)] border border-[var(--virgil-border-soft)] flex items-center justify-center shrink-0">
                   <Bot className="w-4 h-4 text-[var(--virgil-accent)]" />
                 </div>
-                <div className="bg-white rounded-2xl rounded-bl-md px-5 py-3 border border-[var(--virgil-border-soft)] shadow-sm">
-                  <TypingIndicator />
+                <div className="bg-white rounded-2xl rounded-bl-md border border-[var(--virgil-border-soft)] shadow-sm overflow-hidden">
+                  <FetchingIndicator />
                 </div>
               </div>
             )}
+
+            {/* Standard Loading Indicator */}
+            {isLoading && !isFetchingData && messages[messages.length - 1]?.role === "user" && (
+              <div className="flex gap-4 max-w-4xl mx-auto">
+                <div className="w-8 h-8 rounded-full bg-[var(--virgil-bg-alt)] border border-[var(--virgil-border-soft)] flex items-center justify-center shrink-0">
+                  <Bot className="w-4 h-4 text-[var(--virgil-accent)]" />
+                </div>
+                <div className="bg-white rounded-2xl rounded-bl-md px-5 py-4 border border-[var(--virgil-border-soft)] shadow-sm">
+                  <div className="flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-[var(--virgil-text-muted)] animate-bounce-dot" style={{ animationDelay: "0ms" }} />
+                    <span className="w-2 h-2 rounded-full bg-[var(--virgil-text-muted)] animate-bounce-dot" style={{ animationDelay: "160ms" }} />
+                    <span className="w-2 h-2 rounded-full bg-[var(--virgil-text-muted)] animate-bounce-dot" style={{ animationDelay: "320ms" }} />
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div ref={messagesEndRef} />
           </div>
         )}

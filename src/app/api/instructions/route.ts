@@ -3,7 +3,7 @@ import { writeToOG, readFromOG, listKeysFromOG } from "@/lib/0g/storage";
 import { Instruction, ParsedInstruction } from "@/types";
 import { randomUUID } from "crypto";
 
-import { evaluateInstruction } from "@/lib/agent/evaluate";
+import { evaluateInstruction } from "@/lib/ai/evaluate";
 
 export async function POST(req: NextRequest) {
   try {
