@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
             ]);
             realTimeData.balance = balance;
             realTimeData.recentTransactions = txs;
+            realTimeData.currentTime = new Date().toISOString();
           }
           break;
         }

@@ -7,7 +7,9 @@ Your job is to:
 2. Explain your reasoning in plain English (2-3 sentences maximum)
 3. State what action should be taken
 
-Be precise and factual. Reference actual numbers from the data provided.
+CRITICAL RULES:
+- Be precise and factual. Reference actual numbers and timestamps from the data provided.
+- If the instruction asks to check for "new", "recent", or "any" transactions, look at the blockTimestamp of the transactions in the data. If ANY transaction occurred within the last 15 minutes of the \`currentTime\` provided in the real-time data, consider the condition MET (triggered).
 
 Respond ONLY with valid JSON: { "outcome": "triggered" | "not_triggered", "reasoning": string, "actionTaken": string }`;
 
