@@ -42,23 +42,13 @@ Because Virgil logs every evaluation to the **0G Decentralized Storage Network**
 
 - **Framework**: Next.js 15 (App Router) + TypeScript
 - **Wallet**: RainbowKit + Wagmi v2
-- **AI**: Groq LPU - llama-3.3-70b-versatile for near-instant instruction parsing and the Virgil Copilot chat
-- **Blockchain Data**: Etherscan API + CoinGecko API
+- **AI**: Groq LPU (llama-3.3-70b-versatile) for near-instant instruction parsing and Copilot chat
+- **Blockchain Data**: Etherscan API (Modularized for easy Alchemy/Moralis drop-in) + CoinGecko
 - **Storage**: 0G Decentralized Storage via @0gfoundation/0g-storage-ts-sdk
-- **Styling**: TailwindCSS + Framer Motion
 
 ---
 
 ## Running it locally
-
-### Prerequisites
-
-- Node.js 18+
-- A Groq API key (free at console.groq.com)
-- An Etherscan API key (free at etherscan.io/apis)
-- Optional: a 0G wallet private key for real decentralized storage
-
-### Setup
 
     git clone https://github.com/MomentumLabss/virgil-ai
     cd virgil-ai/virgil
@@ -66,44 +56,8 @@ Because Virgil logs every evaluation to the **0G Decentralized Storage Network**
     cp .env.local.example .env.local
     npm run dev
 
-Open http://localhost:3000.
-
-### Environment Variables
-
-    GROQ_API_KEY=your_groq_key_here
-    ETHERSCAN_API_KEY=your_etherscan_key_here
-    OG_PRIVATE_KEY=your_0g_wallet_private_key
-    NEXT_PUBLIC_0G_RPC_URL=https://evmrpc-testnet.0g.ai
-    NEXT_PUBLIC_0G_STORAGE_RPC=https://indexer-storage-testnet-turbo.0g.ai
-
-
-
----
-
-## Project Structure
-
-    src/
-    app/
-      api/
-        parse/          # Groq: converts plain English to a structured instruction
-        instructions/   # Save and fetch instructions via 0G storage
-        evaluate/       # Agent evaluation - checks conditions against live data
-        verify/         # Public record verification (no wallet needed)
-        copilot/        # Streaming AI chat responses
-      dashboard/        # Main user dashboard
-      verify/           # Public proof/verification page
-      page.tsx          # Landing page
-    components/
-      home/             # Landing page sections
-      dashboard/        # Instruction input, cards, activity feed
-      copilot/          # Virgil Copilot chat panel
-      shared/           # Toast, badges, banners, etc.
-    lib/
-      0g/               # 0G SDK integration and storage helpers
-      ai/               # Groq integration (parse, evaluate, copilot)
-      data/             # Etherscan + CoinGecko API clients
-      utils/            # Formatting and constants
-    types/              # Shared TypeScript interfaces
+**Environment Variables Needed:**
+`GROQ_API_KEY`, `ETHERSCAN_API_KEY`, `OG_PRIVATE_KEY`
 
 ---
 
@@ -116,30 +70,6 @@ So you want to use Virgil? It's incredibly simple. You don't need to know how to
 3. **Let the agent work** — Virgil will immediately start monitoring the blockchain and live price feeds for you. It checks every few minutes automatically.
 4. **Get your proof** — When your condition is met, Virgil triggers an action and writes a cryptographic record of *why* it made that decision straight to the 0G network. You'll see a green "Verification Link" pop up on your dashboard.
 5. **Share the receipt** — Send that Verification Link to anyone. They don't even need a wallet to view it. They can click through to the 0G Explorer and prove mathematically that Virgil executed your instruction exactly as promised.
-
----
-
-## API Endpoints
-
-| Route | Method | What it does |
-|-------|--------|--------------|
-| /api/parse | POST | Parse a plain English instruction using Groq |
-| /api/instructions | GET, POST | Fetch or save instructions to 0G |
-| /api/evaluate | POST | Run one evaluation cycle for an instruction |
-| /api/verify | GET | Fetch and verify a record from 0G |
-| /api/copilot | POST | Stream responses from the Virgil Copilot |
-
----
-
-## Notes
-
-
-- **Agent polling**: The agent runs while the dashboard tab is open. A background service for 24/7 monitoring is on the roadmap.
-- **Confidence scores**: When Groq parses an instruction it returns a confidence score. Anything below 70% triggers a clarification prompt before activation.
-
----
-
-
 
 ---
 
