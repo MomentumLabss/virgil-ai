@@ -51,6 +51,37 @@ export function InstructionCard({ instruction, onUpdate }: InstructionCardProps)
     }
   };
 
+  const handleTogglePause = () => {
+    if (!instruction.walletAddress) return;
+    const localKey = `virgil_instructions_${instruction.walletAddress}`;
+    const existing = localStorage.getItem(localKey);
+    if (existing) {
+      let instructions: Instruction[] = JSON.parse(existing);
+      instructions = instructions.map(i => {
+        if (i.id === instruction.id) {
+          return { ...i, status: instruction.status === "paused" ? "active" : "paused" };
+        }
+        return i;
+      });
+      localStorage.setItem(localKey, JSON.stringify(instructions));
+      onUpdate();
+      showToast(`Instruction ${instruction.status === "paused" ? "resumed" : "paused"}`, "success");
+    }
+  };
+
+  const handleDelete = () => {
+    if (!instruction.walletAddress) return;
+    const localKey = `virgil_instructions_${instruction.walletAddress}`;
+    const existing = localStorage.getItem(localKey);
+    if (existing) {
+      let instructions: Instruction[] = JSON.parse(existing);
+      instructions = instructions.filter(i => i.id !== instruction.id);
+      localStorage.setItem(localKey, JSON.stringify(instructions));
+      onUpdate();
+      showToast("Instruction deleted", "success");
+    }
+  };
+
   const status: "monitoring" | "triggered" | "paused" | "error" =
     instruction.status === "active"
       ? "monitoring"
@@ -80,6 +111,7 @@ export function InstructionCard({ instruction, onUpdate }: InstructionCardProps)
             <Zap className="w-4 h-4" />
           </button>
           <button
+            onClick={handleTogglePause}
             className="p-1.5 rounded-button hover:bg-[var(--virgil-glow)] text-gray-500 transition-colors"
             title={instruction.status === "paused" ? "Resume" : "Pause"}
             aria-label={instruction.status === "paused" ? "Resume monitoring" : "Pause monitoring"}
@@ -91,6 +123,7 @@ export function InstructionCard({ instruction, onUpdate }: InstructionCardProps)
             )}
           </button>
           <button
+            onClick={handleDelete}
             className="p-1.5 rounded-button hover:bg-red-50 text-gray-500 hover:text-[var(--virgil-danger)] transition-colors"
             title="Delete"
             aria-label="Delete instruction"

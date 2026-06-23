@@ -11,6 +11,8 @@ interface ActivityFeedProps {
 }
 
 export function ActivityFeed({ records, isLoading, isAgentRunning }: ActivityFeedProps) {
+  const triggeredRecords = records.filter(r => r.outcome === "triggered");
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -41,7 +43,7 @@ export function ActivityFeed({ records, isLoading, isAgentRunning }: ActivityFee
           </div>
         </div>
         <span className="text-xs text-gray-500">
-          {records.length} records
+          {triggeredRecords.length} records
         </span>
       </div>
 
@@ -51,18 +53,18 @@ export function ActivityFeed({ records, isLoading, isAgentRunning }: ActivityFee
             <SkeletonCard key={i} height={64} />
           ))}
         </div>
-      ) : records.length === 0 ? (
+      ) : triggeredRecords.length === 0 ? (
         <div className="text-center py-12 bg-white shadow-sm rounded-card border border-dashed border-[var(--virgil-border-soft)]">
           <p className="text-sm text-gray-500">
-            Your agent has not logged any activity yet.
+            Your agent has not logged any triggered activity yet.
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            Activate an instruction to begin monitoring.
+            Activate an instruction and wait for its condition to be met.
           </p>
         </div>
       ) : (
         <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
-          {records.map((record) => (
+          {triggeredRecords.map((record) => (
             <RecordCard key={record.id} record={record} />
           ))}
         </div>
