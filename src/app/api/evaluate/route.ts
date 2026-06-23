@@ -10,27 +10,17 @@ import { randomUUID } from "crypto";
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as {
-      instructionId: string;
-      walletAddress: string;
+      instruction: Instruction;
     };
 
-    if (!body.instructionId) {
+    if (!body.instruction) {
       return NextResponse.json(
-        { error: "Missing instructionId" },
+        { error: "Missing instruction" },
         { status: 400 }
       );
     }
 
-    // Fetch the instruction from 0G
-    const key = `instructions/${body.walletAddress}/${body.instructionId}`;
-    const instruction = await readFromOG<Instruction>(key);
-
-    if (!instruction) {
-      return NextResponse.json(
-        { error: "Instruction not found" },
-        { status: 404 }
-      );
-    }
+    const instruction = body.instruction;
 
     // Fetch real-time data based on condition type
     const realTimeData: Record<string, unknown> = {};
