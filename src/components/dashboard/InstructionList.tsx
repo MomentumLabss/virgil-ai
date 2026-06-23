@@ -18,10 +18,10 @@ export function InstructionList({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-[var(--virgil-text)]">
+        <h2 className="text-lg font-semibold text-gray-900">
           Your Instructions
         </h2>
-        <span className="text-xs text-[var(--virgil-text-muted)]">
+        <span className="text-xs text-gray-500">
           {instructions.length} active
         </span>
       </div>
@@ -33,11 +33,11 @@ export function InstructionList({
           ))}
         </div>
       ) : instructions.length === 0 ? (
-        <div className="text-center py-12 bg-white/40 rounded-card border border-dashed border-[var(--virgil-border-soft)]">
-          <p className="text-sm text-[var(--virgil-text-muted)]">
+        <div className="text-center py-12 bg-white shadow-sm rounded-card border border-dashed border-[var(--virgil-border-soft)]">
+          <p className="text-sm text-gray-500">
             No active instructions.
           </p>
-          <p className="text-xs text-[var(--virgil-text-muted)] mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             Tell Virgil what to watch using the input above.
           </p>
         </div>

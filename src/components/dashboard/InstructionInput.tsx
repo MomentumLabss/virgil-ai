@@ -135,8 +135,8 @@ export function InstructionInput({
   };
 
   return (
-    <div className="bg-white/60 rounded-card border border-[var(--virgil-border-soft)] p-6 space-y-4">
-      <label className="block text-sm font-medium text-[var(--virgil-text)]">
+    <div className="bg-white shadow-sm rounded-card border border-[var(--virgil-border-soft)] p-6 space-y-4">
+      <label className="block text-sm font-medium text-gray-900">
         Tell Virgil what to watch
       </label>
 
@@ -150,7 +150,7 @@ export function InstructionInput({
           className="w-full px-4 py-3 rounded-button border border-[var(--virgil-border-soft)] bg-black/50 text-white placeholder:text-gray-400 focus:border-[var(--virgil-accent)] focus:ring-1 focus:ring-[var(--virgil-accent)] outline-none resize-none disabled:opacity-50 transition-all text-sm"
           maxLength={500}
         />
-        <div className="absolute bottom-2 right-2 text-xs text-[var(--virgil-text-muted)]">
+        <div className="absolute bottom-2 right-2 text-xs text-gray-500">
           {instruction.length}/500
         </div>
       </div>
@@ -206,10 +206,10 @@ export function InstructionInput({
             <div className="flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
               <div>
-                <p className="text-sm font-medium text-[var(--virgil-text)]">
+                <p className="text-sm font-medium text-gray-900">
                   Virgil needs clarification
                 </p>
-                <p className="text-sm text-[var(--virgil-text-muted)] mt-1">
+                <p className="text-sm text-gray-500 mt-1">
                   {parsed.clarificationQuestion}
                 </p>
               </div>
@@ -235,7 +235,7 @@ export function InstructionInput({
             </div>
             <button
               onClick={handleReset}
-              className="text-xs text-[var(--virgil-text-muted)] hover:text-[var(--virgil-text)]"
+              className="text-xs text-gray-500 hover:text-gray-900"
             >
               Cancel
             </button>
@@ -255,10 +255,10 @@ export function InstructionInput({
             <div className="flex items-start gap-2">
               <CheckCircle className="w-4 h-4 text-[var(--virgil-success)] mt-0.5 shrink-0" />
               <div>
-                <p className="text-sm font-medium text-[var(--virgil-text)]">
+                <p className="text-sm font-medium text-gray-900">
                   Virgil understood your instruction
                 </p>
-                <div className="mt-2 space-y-1.5 text-sm text-[var(--virgil-text-muted)]">
+                <div className="mt-2 space-y-1.5 text-sm text-gray-500">
                   <p>
                     <span className="font-medium">Watching:</span>{" "}
                     {parsed.target || "N/A"}
@@ -294,7 +294,7 @@ export function InstructionInput({
               </button>
               <button
                 onClick={handleReset}
-                className="px-4 py-2 rounded-button border border-[var(--virgil-border-soft)] text-sm text-[var(--virgil-text-muted)] hover:text-[var(--virgil-text)] transition-colors"
+                className="px-4 py-2 rounded-button border border-[var(--virgil-border-soft)] text-sm text-gray-500 hover:text-gray-900 transition-colors"
               >
                 Edit
               </button>

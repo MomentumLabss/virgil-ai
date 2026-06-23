@@ -15,7 +15,7 @@ export function ActivityFeed({ records, isLoading, isAgentRunning }: ActivityFee
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h2 className="text-lg font-semibold text-[var(--virgil-text)]">
+          <h2 className="text-lg font-semibold text-gray-900">
             Agent Activity
           </h2>
           <div className="flex items-center gap-2">
@@ -35,12 +35,12 @@ export function ActivityFeed({ records, isLoading, isAgentRunning }: ActivityFee
                 }`}
               />
             </span>
-            <span className="text-xs text-[var(--virgil-text-muted)]">
+            <span className="text-xs text-gray-500">
               {isAgentRunning ? "Live" : "Idle"}
             </span>
           </div>
         </div>
-        <span className="text-xs text-[var(--virgil-text-muted)]">
+        <span className="text-xs text-gray-500">
           {records.length} records
         </span>
       </div>
@@ -52,11 +52,11 @@ export function ActivityFeed({ records, isLoading, isAgentRunning }: ActivityFee
           ))}
         </div>
       ) : records.length === 0 ? (
-        <div className="text-center py-12 bg-white/40 rounded-card border border-dashed border-[var(--virgil-border-soft)]">
-          <p className="text-sm text-[var(--virgil-text-muted)]">
+        <div className="text-center py-12 bg-white shadow-sm rounded-card border border-dashed border-[var(--virgil-border-soft)]">
+          <p className="text-sm text-gray-500">
             Your agent has not logged any activity yet.
           </p>
-          <p className="text-xs text-[var(--virgil-text-muted)] mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             Activate an instruction to begin monitoring.
           </p>
         </div>

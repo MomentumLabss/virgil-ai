@@ -24,7 +24,7 @@ export function RecordCard({ record }: RecordCardProps) {
       layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white/60 rounded-card border border-[var(--virgil-border-soft)] overflow-hidden hover:shadow-glow transition-shadow"
+      className="bg-white shadow-sm rounded-card border border-[var(--virgil-border-soft)] overflow-hidden hover:shadow-glow transition-shadow"
     >
       <button
         onClick={() => setExpanded(!expanded)}
@@ -32,10 +32,10 @@ export function RecordCard({ record }: RecordCardProps) {
       >
         <StatusBadge variant={status} />
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-[var(--virgil-text)] truncate">
+          <p className="text-sm text-gray-900 truncate">
             {record.conditionChecked}
           </p>
-          <p className="text-xs text-[var(--virgil-text-muted)] mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             {formatRelativeTime(record.timestamp)}
           </p>
         </div>
@@ -52,7 +52,7 @@ export function RecordCard({ record }: RecordCardProps) {
             animate={{ rotate: expanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronDown className="w-4 h-4 text-[var(--virgil-text-muted)]" />
+            <ChevronDown className="w-4 h-4 text-gray-500" />
           </motion.div>
         </div>
       </button>
@@ -68,20 +68,20 @@ export function RecordCard({ record }: RecordCardProps) {
           >
             <div className="px-4 pb-4 pt-0 space-y-3 border-t border-[var(--virgil-border-soft)]">
               <div className="pt-3">
-                <span className="text-xs font-medium text-[var(--virgil-text-muted)] uppercase tracking-wider">
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                   AI Reasoning
                 </span>
-                <p className="text-sm text-[var(--virgil-text)] mt-1 leading-relaxed">
+                <p className="text-sm text-gray-900 mt-1 leading-relaxed">
                   {record.reasoning}
                 </p>
               </div>
 
               {record.dataObserved && Object.keys(record.dataObserved).length > 0 && (
                 <div>
-                  <span className="text-xs font-medium text-[var(--virgil-text-muted)] uppercase tracking-wider">
+                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Data Observed
                   </span>
-                  <pre className="mt-1 p-3 rounded-lg bg-[var(--virgil-bg-alt)] text-xs font-mono text-[var(--virgil-text-muted)] overflow-auto max-h-40">
+                  <pre className="mt-1 p-3 rounded-lg bg-[var(--virgil-bg-alt)] text-xs font-mono text-gray-500 overflow-auto max-h-40">
                     {JSON.stringify(record.dataObserved, null, 2)}
                   </pre>
                 </div>

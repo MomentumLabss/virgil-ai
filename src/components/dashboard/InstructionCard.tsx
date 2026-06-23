@@ -57,7 +57,7 @@ export function InstructionCard({ instruction, onUpdate }: InstructionCardProps)
       layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white/60 rounded-card border border-[var(--virgil-border-soft)] p-5 hover:shadow-glow transition-shadow"
+      className="bg-white shadow-sm rounded-card border border-[var(--virgil-border-soft)] p-5 hover:shadow-glow transition-shadow"
     >
       <div className="flex items-start justify-between gap-4 mb-3">
         <StatusBadge variant={status} />
@@ -72,7 +72,7 @@ export function InstructionCard({ instruction, onUpdate }: InstructionCardProps)
             <Zap className="w-4 h-4" />
           </button>
           <button
-            className="p-1.5 rounded-button hover:bg-[var(--virgil-glow)] text-[var(--virgil-text-muted)] transition-colors"
+            className="p-1.5 rounded-button hover:bg-[var(--virgil-glow)] text-gray-500 transition-colors"
             title={instruction.status === "paused" ? "Resume" : "Pause"}
             aria-label={instruction.status === "paused" ? "Resume monitoring" : "Pause monitoring"}
           >
@@ -83,7 +83,7 @@ export function InstructionCard({ instruction, onUpdate }: InstructionCardProps)
             )}
           </button>
           <button
-            className="p-1.5 rounded-button hover:bg-red-50 text-[var(--virgil-text-muted)] hover:text-[var(--virgil-danger)] transition-colors"
+            className="p-1.5 rounded-button hover:bg-red-50 text-gray-500 hover:text-[var(--virgil-danger)] transition-colors"
             title="Delete"
             aria-label="Delete instruction"
           >
@@ -92,12 +92,12 @@ export function InstructionCard({ instruction, onUpdate }: InstructionCardProps)
         </div>
       </div>
 
-      <p className="text-sm text-[var(--virgil-text)] mb-3 leading-relaxed">
+      <p className="text-sm text-gray-900 mb-3 leading-relaxed">
         {instruction.parsed.raw}
       </p>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-[var(--virgil-text-muted)]">
+        <div className="flex items-center justify-between text-xs text-gray-500">
           <span>Target</span>
           <span className="font-mono">
             {instruction.parsed.target.startsWith("0x")
@@ -105,7 +105,7 @@ export function InstructionCard({ instruction, onUpdate }: InstructionCardProps)
               : instruction.parsed.target}
           </span>
         </div>
-        <div className="flex items-center justify-between text-xs text-[var(--virgil-text-muted)]">
+        <div className="flex items-center justify-between text-xs text-gray-500">
           <span>Last checked</span>
           <span>
             {instruction.lastCheckedAt

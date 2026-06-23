@@ -26,13 +26,13 @@ export function AgentStatusPanel({
           icon: Activity,
           label: "Agent Status",
           value: isRunning ? "Running" : "Idle",
-          color: isRunning ? "text-[var(--virgil-success)]" : "text-[var(--virgil-text-muted)]",
+          color: isRunning ? "text-[var(--virgil-success)]" : "text-gray-500",
         },
         {
           icon: Clock,
           label: "Last Poll",
           value: lastPollText,
-          color: "text-[var(--virgil-text)]",
+          color: "text-gray-900",
         },
         {
           icon: ListChecks,
@@ -44,16 +44,16 @@ export function AgentStatusPanel({
           icon: Database,
           label: "Total Records",
           value: `${totalRecords}`,
-          color: "text-[var(--virgil-text)]",
+          color: "text-gray-900",
         },
       ].map((item) => (
         <div
           key={item.label}
-          className="bg-white/60 rounded-card border border-[var(--virgil-border-soft)] p-4"
+          className="bg-white shadow-sm rounded-card border border-[var(--virgil-border-soft)] p-4"
         >
           <div className="flex items-center gap-2 mb-2">
-            <item.icon className="w-4 h-4 text-[var(--virgil-text-muted)]" />
-            <span className="text-xs text-[var(--virgil-text-muted)]">
+            <item.icon className="w-4 h-4 text-gray-500" />
+            <span className="text-xs text-gray-500">
               {item.label}
             </span>
           </div>
