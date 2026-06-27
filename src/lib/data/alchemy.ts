@@ -57,7 +57,11 @@ export async function getTokenBalances(address: string): Promise<any[]> {
               const formatted = Number(rawBal) / Math.pow(10, decimals);
               
               if (formatted > 0.0001) {
+                // Extract chain name from url
+                const chainMatch = url.match(/https:\/\/(.*?)\.g\.alchemy/);
+                const chainName = chainMatch ? chainMatch[1].replace("-mainnet", "") : "ethereum";
                 allBalances.push({
+                  chain: chainName,
                   symbol: metaData.result.symbol,
                   name: metaData.result.name,
                   balance: formatted.toFixed(4),

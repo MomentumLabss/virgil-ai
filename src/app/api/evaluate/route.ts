@@ -145,6 +145,32 @@ export async function POST(req: NextRequest) {
       // Just record the trigger time
       instruction.lastTriggeredAt = timestamp;
       instruction.triggeredAt = timestamp; // Keep for legacy compatibility
+      
+      // SEND TELEGRAM PUSH NOTIFICATION
+      try {
+        const { telegramUsers } = await import("@/lib/0g/storage");
+        const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+        if (TELEGRAM_BOT_TOKEN) {
+          // Find the chatId by ownerId (walletAddress)
+          let targetChatId: string | null = null;
+          for (const [chatId, wallet] of telegramUsers.entries()) {
+            if (wallet.toLowerCase() === instruction.walletAddress.toLowerCase()) {
+              targetChatId = chatId;
+              break;
+            }
+          }
+          if (targetChatId) {
+            const text = `🚨 **Virgil AI Alert** 🚨\n\nCondition Met: ${instruction.parsed.raw}\n\nOutcome: ${evaluation.reasoning}\n\n[Verify Record](${record.verificationUrl})`;
+            await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ chat_id: targetChatId, text, parse_mode: "Markdown" })
+            });
+          }
+        }
+      } catch (e) {
+        console.error("Failed to push Telegram alert", e);
+      }
     }
     await writeToOG(instruction.ogStorageKey, instruction);
 

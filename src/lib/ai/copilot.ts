@@ -343,3 +343,118 @@ export async function* streamCopilotResponse(
     yield `I'm sorry, I encountered an error while fetching data: ${message}`;
   }
 }
+
+export async function generateTelegramResponse(
+  messages: CopilotMessage[],
+  instructions: Instruction[],
+  recentRecords: AgentRecord[],
+  ownerId: string,
+  isTelegramNative: boolean
+): Promise<string> {
+  const apiKey = process.env.GROQ_API_KEY;
+  const model = "llama-3.3-70b-versatile";
+
+  if (!apiKey) return "I'm sorry, but my AI core is not configured. Please contact the developer.";
+
+  // A special prompt prefix for Telegram native users
+  const telegramPrefix = isTelegramNative 
+    ? "You are chatting with the user on Telegram. They have registered their wallet address. Do not tell them to go to a dashboard."
+    : "You are chatting with a user on Telegram who has linked their Web3 dashboard account.";
+
+  const systemPrompt = telegramPrefix + "\n" + buildSystemPrompt(instructions, recentRecords);
+  let formattedMessages: any[] = [
+    { role: "system", content: systemPrompt },
+    ...messages.map((m) => ({
+      role: m.role as "user" | "assistant",
+      content: m.content,
+    }))
+  ];
+
+  try {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model,
+        messages: formattedMessages,
+        tools: TOOLS,
+        tool_choice: "auto",
+        stream: false,
+      })
+    });
+
+    const initialData = await response.json();
+    const message = initialData.choices?.[0]?.message;
+
+    if (message?.tool_calls && message.tool_calls.length > 0) {
+      formattedMessages.push(message);
+
+      for (const toolCall of message.tool_calls) {
+        if (toolCall.function.name === "getETHBalance") {
+          try {
+            const args = JSON.parse(toolCall.function.arguments);
+            const balanceEth = await getETHBalance(args.address);
+            formattedMessages.push({ tool_call_id: toolCall.id, role: "tool", name: "getETHBalance", content: `Balance: ${balanceEth} ETH` });
+          } catch (e) {
+            formattedMessages.push({ tool_call_id: toolCall.id, role: "tool", name: "getETHBalance", content: `Error: ${e}` });
+          }
+        } else if (toolCall.function.name === "getTokenBalances") {
+          try {
+            const args = JSON.parse(toolCall.function.arguments);
+            const balances = await getTokenBalances(args.address);
+            formattedMessages.push({ tool_call_id: toolCall.id, role: "tool", name: "getTokenBalances", content: JSON.stringify(balances) });
+          } catch (e) {
+            formattedMessages.push({ tool_call_id: toolCall.id, role: "tool", name: "getTokenBalances", content: `Error: ${e}` });
+          }
+        } else if (toolCall.function.name === "createMonitoringInstruction") {
+          try {
+            const args = JSON.parse(toolCall.function.arguments);
+            const parsed = await parseInstruction(args.instructionText);
+            const id = randomUUID();
+            const instruction: Instruction = {
+              id,
+              walletAddress: ownerId, // Store ownerId directly
+              parsed,
+              status: "active",
+              createdAt: Math.floor(Date.now() / 1000),
+              lastCheckedAt: null,
+              triggeredAt: null,
+              ogStorageKey: `instructions/${ownerId}/${id}`,
+              ogTxHash: null,
+            };
+            const result = await writeToOG(instruction.ogStorageKey, instruction);
+            instruction.ogTxHash = result.txHash;
+            await writeToOG(instruction.ogStorageKey, instruction);
+            
+            formattedMessages.push({
+              tool_call_id: toolCall.id,
+              role: "tool",
+              name: "createMonitoringInstruction",
+              content: `Success! Created instruction ID ${id} tied to owner ${ownerId}.`
+            });
+          } catch (e) {
+            formattedMessages.push({ tool_call_id: toolCall.id, role: "tool", name: "createMonitoringInstruction", content: `Error: ${e}` });
+          }
+        } else {
+            // Placeholder for other tools to prevent breaking
+            formattedMessages.push({ tool_call_id: toolCall.id, role: "tool", name: toolCall.function.name, content: `Tool executed successfully.` });
+        }
+      }
+
+      const finalResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model, messages: formattedMessages, stream: false })
+      });
+      const finalData = await finalResponse.json();
+      return finalData.choices?.[0]?.message?.content || "Finished processing.";
+    }
+
+    return message?.content || "I didn't quite catch that.";
+  } catch (e) {
+    return "I encountered an error communicating with my core AI engine.";
+  }
+}

@@ -15,6 +15,7 @@ import { InstructionList } from "@/components/dashboard/InstructionList";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { OGUnavailableBanner } from "@/components/shared/OGUnavailableBanner";
 import { AgentStatusPanel } from "@/components/dashboard/AgentStatus";
+import { TelegramConnect } from "@/components/dashboard/TelegramConnect";
 
 export default function DashboardPage() {
   const { address, isConnected } = useAccount();
@@ -261,6 +262,14 @@ export default function DashboardPage() {
         <div className="grid lg:grid-cols-5 gap-8">
           {/* Left Panel - Instructions */}
           <div className="lg:col-span-2 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <TelegramConnect walletAddress={address || ""} />
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}

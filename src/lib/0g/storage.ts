@@ -12,6 +12,10 @@ const keyIndex = new Map<string, string>();
 const memoryStore = new Map<string, string>();
 const memoryIndex = new Map<string, string[]>(); // prefix -> keys
 
+// Telegram Account Linking Maps
+export const linkCodes = new Map<string, string>(); // code -> walletAddress
+export const telegramUsers = new Map<string, string>(); // chatId -> walletAddress
+
 function getMemoryKey(key: string): string {
   return `virgil:${key}`;
 }
