@@ -22,6 +22,12 @@ DO NOT leak raw JSON arrays to the user. Always format your responses in clean, 
 }
 
 import { getETHBalance, getTransactions } from "@/lib/data/etherscan";
+import { getTokenBalances } from "@/lib/data/alchemy";
+import { getProtocolTVL } from "@/lib/data/defillama";
+import { getTokenPrice } from "@/lib/data/prices";
+import { parseInstruction } from "@/lib/ai/parse";
+import { writeToOG } from "@/lib/0g/storage";
+import { randomUUID } from "crypto";
 
 const TOOLS = [
   {
@@ -53,13 +59,56 @@ const TOOLS = [
         required: ["address"]
       }
     }
+  },
+  {
+    type: "function",
+    function: {
+      name: "getTokenBalances",
+      description: "Fetches all non-zero ERC-20 token balances for a wallet across multiple chains.",
+      parameters: {
+        type: "object",
+        properties: {
+          address: { type: "string", description: "The Ethereum wallet address (0x...)" }
+        },
+        required: ["address"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "getTokenPrice",
+      description: "Fetches the current real-time price of a token (e.g. 'BTC', 'ETH', 'SOL') in USD.",
+      parameters: {
+        type: "object",
+        properties: {
+          symbol: { type: "string", description: "The token ticker symbol (e.g. 'BTC', 'ETH')" }
+        },
+        required: ["symbol"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "createMonitoringInstruction",
+      description: "Creates a new background monitoring instruction (Virgil agent) for the user. Call this if the user asks you to 'watch', 'monitor', or 'alert' them about an on-chain event.",
+      parameters: {
+        type: "object",
+        properties: {
+          instructionText: { type: "string", description: "The plain English condition to monitor, e.g., 'Alert me if 0x123... receives USDT'" }
+        },
+        required: ["instructionText"]
+      }
+    }
   }
 ];
 
 export async function* streamCopilotResponse(
   messages: CopilotMessage[],
   instructions: Instruction[],
-  recentRecords: AgentRecord[]
+  recentRecords: AgentRecord[],
+  walletAddress?: string
 ): AsyncGenerator<string, void, unknown> {
   const apiKey = process.env.GROQ_API_KEY;
   const model = "llama-3.3-70b-versatile";
@@ -144,6 +193,99 @@ export async function* streamCopilotResponse(
               role: "tool",
               name: "getTransactions",
               content: `Error fetching txs: ${e}`
+            });
+          }
+        } else if (toolCall.function.name === "getTokenBalances") {
+          try {
+            const args = JSON.parse(toolCall.function.arguments);
+            const balances = await getTokenBalances(args.address);
+            formattedMessages.push({
+              tool_call_id: toolCall.id,
+              role: "tool",
+              name: "getTokenBalances",
+              content: JSON.stringify(balances)
+            });
+          } catch (e) {
+            formattedMessages.push({
+              tool_call_id: toolCall.id,
+              role: "tool",
+              name: "getTokenBalances",
+              content: `Error fetching balances: ${e}`
+            });
+          }
+        } else if (toolCall.function.name === "getProtocolTVL") {
+          try {
+            const args = JSON.parse(toolCall.function.arguments);
+            const tvl = await getProtocolTVL(args.protocol);
+            formattedMessages.push({
+              tool_call_id: toolCall.id,
+              role: "tool",
+              name: "getProtocolTVL",
+              content: JSON.stringify(tvl)
+            });
+          } catch (e) {
+            formattedMessages.push({
+              tool_call_id: toolCall.id,
+              role: "tool",
+              name: "getProtocolTVL",
+              content: `Error fetching TVL: ${e}`
+            });
+          }
+        } else if (toolCall.function.name === "getTokenPrice") {
+          try {
+            const args = JSON.parse(toolCall.function.arguments);
+            const price = await getTokenPrice(args.symbol, "usd");
+            formattedMessages.push({
+              tool_call_id: toolCall.id,
+              role: "tool",
+              name: "getTokenPrice",
+              content: `Current price of ${args.symbol}: $${price}`
+            });
+          } catch (e) {
+            formattedMessages.push({
+              tool_call_id: toolCall.id,
+              role: "tool",
+              name: "getTokenPrice",
+              content: `Error fetching price: ${e}`
+            });
+          }
+        } else if (toolCall.function.name === "createMonitoringInstruction") {
+          try {
+            if (!walletAddress) throw new Error("Wallet address is required to create an instruction.");
+            const args = JSON.parse(toolCall.function.arguments);
+            
+            // Parse the natural language into structured params
+            const parsed = await parseInstruction(args.instructionText);
+            
+            // Write to 0G database
+            const id = randomUUID();
+            const instruction: Instruction = {
+              id,
+              walletAddress,
+              parsed,
+              status: "active",
+              createdAt: Math.floor(Date.now() / 1000),
+              lastCheckedAt: null,
+              triggeredAt: null,
+              ogStorageKey: `instructions/${walletAddress}/${id}`,
+              ogTxHash: null,
+            };
+            const result = await writeToOG(instruction.ogStorageKey, instruction);
+            instruction.ogTxHash = result.txHash;
+            await writeToOG(instruction.ogStorageKey, instruction);
+            
+            formattedMessages.push({
+              tool_call_id: toolCall.id,
+              role: "tool",
+              name: "createMonitoringInstruction",
+              content: `Successfully created and saved the monitoring instruction to 0G Storage! Instruction ID: ${id}. The agent is now actively monitoring it in the background.`
+            });
+          } catch (e) {
+            formattedMessages.push({
+              tool_call_id: toolCall.id,
+              role: "tool",
+              name: "createMonitoringInstruction",
+              content: `Error creating instruction: ${e}`
             });
           }
         }

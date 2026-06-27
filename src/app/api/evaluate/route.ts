@@ -30,9 +30,11 @@ export async function POST(req: NextRequest) {
         case "wallet_movement": {
           const target = instruction.parsed.target;
           if (target.startsWith("0x")) {
-            const [balance, txs] = await Promise.all([
+            const { getTokenBalances } = await import("@/lib/data/alchemy");
+            const [balance, txs, tokenBalances] = await Promise.all([
               getETHBalance(target),
               getTransactions(target, 5),
+              getTokenBalances(target),
             ]);
             
             const now = Date.now();
@@ -51,6 +53,7 @@ export async function POST(req: NextRequest) {
             
             realTimeData.balance = balance;
             realTimeData.recentTransactions = enhancedTxs;
+            realTimeData.tokenBalances = tokenBalances;
             realTimeData.currentTime = new Date().toISOString();
           }
           break;

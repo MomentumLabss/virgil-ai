@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
           const generator = streamCopilotResponse(
             body.messages,
             body.context?.instructions || [],
-            body.context?.recentRecords || []
+            body.context?.recentRecords || [],
+            body.walletAddress
           );
 
           for await (const chunk of generator) {
